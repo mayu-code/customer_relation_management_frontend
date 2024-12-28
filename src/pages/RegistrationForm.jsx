@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Input, Button, Checkbox, Radio } from "@material-tailwind/react";
+import { getCources, sendRegistrationForm } from "../api/apiData";
+import { useQuery } from "@tanstack/react-query";
 
 export const RegistrationForm = () => {
   const [formData, setFormData] = useState({
@@ -10,14 +12,16 @@ export const RegistrationForm = () => {
     branch: "",
     source: [],
     qualification: "",
-    otherQualification: "", // to store the custom qualification if "Others" is selected
-    courses: [],
-    totalFees: "",
+    otherQualification: "", // used to store other qualification if "Others" is selected
+    registeredCourses: [], // changed from 'courses' to 'registeredCourses'
+    totalFees: 0,
     amountPaid: "",
     paymentType: "",
     installmentMonths: 0,
     installments: 0,
   });
+
+  const paymentTypes = ["CASH", "CHEQUE", "ONLINE"];
 
   const [errors, setErrors] = useState({
     name: "",
@@ -28,7 +32,7 @@ export const RegistrationForm = () => {
     source: "",
     qualification: "",
     otherQualification: "",
-    courses: "",
+    registeredCourses: "", // changed from 'courses' to 'registeredCourses'
     totalFees: "",
     amountPaid: "",
     paymentType: "",
@@ -38,8 +42,8 @@ export const RegistrationForm = () => {
   // Calculate Installments based on Total Fees, Amount Paid, and Installment Months
   useEffect(() => {
     if (
-      formData.totalFees &&
-      formData.amountPaid &&
+      formData.totalFees > 0 &&
+      formData.amountPaid >= 0 &&
       formData.installmentMonths > 0
     ) {
       const remainingAmount =
@@ -93,7 +97,7 @@ export const RegistrationForm = () => {
         if (formData.qualification === "Others" && !value)
           error = "Please enter your qualification.";
         break;
-      case "courses":
+      case "registeredCourses": // updated from 'courses' to 'registeredCourses'
         if (value.length === 0) error = "Please select at least one course.";
         break;
       case "totalFees":
@@ -114,6 +118,21 @@ export const RegistrationForm = () => {
     return error;
   };
 
+  const getAllCources = async () => {
+    try {
+      const res = await getCources();
+      return res?.data?.data;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
+
+  const { data, error, isLoading } = useQuery({
+    queryKey: ["cources"],
+    queryFn: getAllCources,
+  });
+
   // Handle Change for Inputs
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -126,23 +145,38 @@ export const RegistrationForm = () => {
             : prevState.source.filter((item) => item !== value);
           return { ...prevState, source: updatedSource };
         });
-      } else if (name === "courses") {
+      } else if (name === "registeredCourses") {
+        // updated from 'courses' to 'registeredCourses'
         setFormData((prevState) => {
-          let updatedCourses = [...prevState.courses];
+          let updatedCourses = [...prevState.registeredCourses];
           if (checked) {
-            updatedCourses.push({ courseName: value });
+            const selectedCourse = data.find(
+              (course) => course.courseName === value
+            );
+            updatedCourses.push({
+              courseName: value,
+              price: selectedCourse.price,
+            });
           } else {
             updatedCourses = updatedCourses.filter(
               (course) => course.courseName !== value
             );
           }
-          return { ...prevState, courses: updatedCourses };
+          const newTotalFees = updatedCourses.reduce(
+            (total, course) => total + course.price,
+            0
+          );
+          return {
+            ...prevState,
+            registeredCourses: updatedCourses, // updated from 'courses' to 'registeredCourses'
+            totalFees: newTotalFees,
+          };
         });
       }
     } else if (type === "radio") {
       setFormData((prevState) => ({
         ...prevState,
-        [name]: value,
+        [name]: value, // No .toUpperCase() here
       }));
     } else {
       setFormData((prevState) => ({
@@ -151,11 +185,24 @@ export const RegistrationForm = () => {
       }));
     }
 
-    // Real-time validation
     setErrors((prevErrors) => ({
       ...prevErrors,
       [name]: validateField(name, value),
     }));
+  };
+
+  const jwt = localStorage.getItem("jwt");
+
+  const createRegistration = async (formReq) => {
+    try {
+      const res = await sendRegistrationForm(jwt, formReq);
+      // console.log(res);
+
+      return alert(res?.data?.message);
+    } catch (error) {
+      console.log(error);
+      return alert("Error submitting form: " + error.message);
+    }
   };
 
   // Handle form submission
@@ -174,8 +221,24 @@ export const RegistrationForm = () => {
         ...formData,
         // Convert source array to a comma-separated string
         source: formData.source.join(", "),
+        // If qualification is "Others", replace it with otherQualification (send only qualification)
+        qualification:
+          formData.qualification === "Others"
+            ? formData.otherQualification
+            : formData.qualification,
+        // Send registeredCourses without course id, only courseName and price
+        registeredCourses: formData.registeredCourses.map((course) => ({
+          courseName: course.courseName,
+          price: course.price,
+        })),
       };
+
+      // Remove otherQualification from submission data
+      delete submissionData.otherQualification;
+
       console.log("Form Data: ", submissionData);
+
+      createRegistration(submissionData);
 
       // Clear form data after successful submission
       setFormData({
@@ -187,8 +250,8 @@ export const RegistrationForm = () => {
         source: [],
         qualification: "",
         otherQualification: "", // reset the otherQualification
-        courses: [],
-        totalFees: "",
+        registeredCourses: [], // reset registeredCourses
+        totalFees: 0,
         amountPaid: "",
         paymentType: "",
         installmentMonths: 0,
@@ -314,7 +377,7 @@ export const RegistrationForm = () => {
           ))}
           {formData.qualification === "Others" && (
             <Input
-              label="Other Qualification"
+              label="Enter Other Qualification"
               name="otherQualification"
               value={formData.otherQualification}
               onChange={handleChange}
@@ -326,33 +389,42 @@ export const RegistrationForm = () => {
           )}
         </div>
 
-        {/* Courses */}
+        {/* Registered Courses */}
         <div className="mb-6">
-          <p className="mb-2">Courses Registered For</p>
-          {[
-            "C & Data Structure",
-            "C++",
-            "C# .Net",
-            "ASP .Net",
-            "Adv .Net",
-            "Java",
-            "Adv. Java",
-            "Android/IOS Development",
-            "Others",
-          ].map((course) => (
-            <Checkbox
-              key={course}
-              label={course}
-              name="courses"
-              value={course}
-              checked={formData.courses.some(
-                (item) => item.courseName === course
-              )}
-              onChange={handleChange}
+          <p className="mb-2">Select Courses</p>
+          {data &&
+            data.map((course) => (
+              <Checkbox
+                key={course.courseName}
+                label={course.courseName}
+                name="registeredCourses" // updated from 'courses' to 'registeredCourses'
+                value={course.courseName}
+                checked={formData.registeredCourses.some(
+                  (item) => item.courseName === course.courseName
+                )}
+                onChange={handleChange}
+              />
+            ))}
+          {errors.registeredCourses && (
+            <p className="text-red-500 text-sm">{errors.registeredCourses}</p>
+          )}
+        </div>
+
+        {/* Payment Type */}
+        <div className="mb-6">
+          <p className="mb-2">Payment Type</p>
+          {paymentTypes.map((option) => (
+            <Radio
+              key={option}
+              label={option.toLowerCase()}
+              name="paymentType"
+              value={option}
+              checked={formData.paymentType === option} // Ensure that paymentType matches the selected option
+              onChange={handleChange} // This should properly update the state
             />
           ))}
-          {errors.courses && (
-            <p className="text-red-500 text-sm">{errors.courses}</p>
+          {errors.paymentType && (
+            <p className="text-red-500 text-sm">{errors.paymentType}</p>
           )}
         </div>
 
@@ -360,11 +432,11 @@ export const RegistrationForm = () => {
         <div className="mb-6">
           <Input
             label="Total Fees"
+            type="number"
             name="totalFees"
             value={formData.totalFees}
             onChange={handleChange}
             error={errors.totalFees}
-            type="number"
           />
           {errors.totalFees && (
             <p className="text-red-500 text-sm">{errors.totalFees}</p>
@@ -375,32 +447,14 @@ export const RegistrationForm = () => {
         <div className="mb-6">
           <Input
             label="Amount Paid"
+            type="number"
             name="amountPaid"
             value={formData.amountPaid}
             onChange={handleChange}
             error={errors.amountPaid}
-            type="number"
           />
           {errors.amountPaid && (
             <p className="text-red-500 text-sm">{errors.amountPaid}</p>
-          )}
-        </div>
-
-        {/* Payment Type */}
-        <div className="mb-6">
-          <p className="mb-2">Payment Type</p>
-          {["Cash", "Cheque", "Online"].map((option) => (
-            <Radio
-              key={option}
-              label={option}
-              name="paymentType"
-              value={option}
-              checked={formData.paymentType === option}
-              onChange={handleChange}
-            />
-          ))}
-          {errors.paymentType && (
-            <p className="text-red-500 text-sm">{errors.paymentType}</p>
           )}
         </div>
 
@@ -408,37 +462,29 @@ export const RegistrationForm = () => {
         <div className="mb-6">
           <Input
             label="Installment Months"
+            type="number"
             name="installmentMonths"
             value={formData.installmentMonths}
             onChange={handleChange}
             error={errors.installmentMonths}
-            type="number"
-            min="1"
           />
           {errors.installmentMonths && (
             <p className="text-red-500 text-sm">{errors.installmentMonths}</p>
           )}
         </div>
 
-        {/* Installments Calculation */}
-        {formData.installmentMonths > 0 && (
-          <div className="mb-6">
-            <p className="text-gray-700">
-              Remaining Amount: ₹
-              {parseFloat(formData.totalFees) - parseFloat(formData.amountPaid)}
-            </p>
-            <p className="text-gray-700">
-              Installment per Month: ₹{formData.installments}
-            </p>
-          </div>
-        )}
-
-        {/* Submit Button */}
-        <div className="text-center">
-          <Button type="submit" className="mt-2 bg-gray-900 text-md">
-            Submit
-          </Button>
+        {/* Installments */}
+        <div className="mb-6">
+          <Input
+            label="Installments"
+            type="number"
+            name="installments"
+            value={formData.installments}
+            readOnly
+          />
         </div>
+
+        <Button type="submit">Submit</Button>
       </form>
     </div>
   );

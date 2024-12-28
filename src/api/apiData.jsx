@@ -42,3 +42,25 @@ export const getAdmin = (jwt) => {
     },
   });
 };
+
+export const getCources = () => {
+  return api.get("/home/getAllCourse");
+};
+
+export const sendEnquiryForm = (jwt, formReq) => {
+  return api.post("/manager/addEnquiry", formReq, {
+    headers: {
+      // Corrected from 'Headers' to 'headers'
+      Authorization: `Bearer ${jwt}`,
+    },
+  });
+};
+
+export const sendRegistrationForm = (jwt, formReq) => {
+  return api.post("/manager/addRegistration", formReq, {
+    headers: {
+      // Corrected from 'Headers' to 'headers'
+      Authorization: `Bearer ${jwt}`,
+    },
+  });
+};

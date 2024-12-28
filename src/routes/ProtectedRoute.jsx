@@ -66,7 +66,7 @@ export const ManagerProtectedRoute = () => {
     return (
       <section className="flex justify-between">
         <Sidebar />
-        <div className="w-full flex justify-center items-center">
+        <div className="w-full h-screen">
           <Outlet />
         </div>
       </section>

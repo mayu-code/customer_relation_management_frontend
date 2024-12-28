@@ -13,6 +13,7 @@ import { ContactUs } from "../pages/ContactUs";
 import { EnquiryForm } from "../pages/EnquiryForm";
 import { RegistrationForm } from "../pages/RegistrationForm";
 import GradientInfotechForm from "../pages/manager/Form";
+import { Enquiries } from "../pages/manager/Enquiries";
 
 export const router = createBrowserRouter([
   {
@@ -60,8 +61,8 @@ export const router = createBrowserRouter([
             element: <RegistrationForm />,
           },
           {
-            path: "/manager/form",
-            element: <GradientInfotechForm />,
+            path: "/manager/enquiries",
+            element: <Enquiries />,
           },
         ],
       },

@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { Input, Button, Checkbox, Radio } from "@material-tailwind/react";
+import { useQuery } from "@tanstack/react-query";
+import { getCources, sendEnquiryForm } from "../api/apiData";
 
 export const EnquiryForm = () => {
   const [formData, setFormData] = useState({
@@ -9,8 +11,8 @@ export const EnquiryForm = () => {
     college: "",
     branch: "",
     source: [],
-    qualification: "", // No otherQualification field here
-    courses: [],
+    qualification: "",
+    courses: [], // Store full course objects here
   });
 
   const [errors, setErrors] = useState({
@@ -24,7 +26,7 @@ export const EnquiryForm = () => {
     courses: "",
   });
 
-  const [otherQualification, setOtherQualification] = useState(""); // Separate state for 'Others' input
+  const [otherQualification, setOtherQualification] = useState("");
 
   // Validate individual fields
   const validateField = (name, value) => {
@@ -69,6 +71,21 @@ export const EnquiryForm = () => {
     return error;
   };
 
+  const getAllCources = async () => {
+    try {
+      const res = await getCources();
+      return res?.data?.data;
+    } catch (error) {
+      console.log(error);
+      return null;
+    }
+  };
+
+  const { data } = useQuery({
+    queryKey: ["cources"],
+    queryFn: getAllCources,
+  });
+
   // Handle Change for Inputs
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -83,14 +100,12 @@ export const EnquiryForm = () => {
         });
       } else if (name === "courses") {
         setFormData((prevState) => {
-          let updatedCourses = [...prevState.courses];
-          if (checked) {
-            updatedCourses.push({ courseName: value });
-          } else {
-            updatedCourses = updatedCourses.filter(
-              (course) => course.courseName !== value
-            );
-          }
+          const updatedCourses = checked
+            ? [
+                ...prevState.courses,
+                data.find((course) => course.courseName === value), // Store the full course object
+              ]
+            : prevState.courses.filter((course) => course.courseName !== value); // Remove the course object
           return { ...prevState, courses: updatedCourses };
         });
       }
@@ -113,6 +128,19 @@ export const EnquiryForm = () => {
     }));
   };
 
+  const jwt = localStorage.getItem("jwt");
+
+  const submitEnquiryReq = async (formReq) => {
+    try {
+      const res = await sendEnquiryForm(jwt, formReq);
+
+      return alert(res?.data?.message);
+    } catch (error) {
+      console.log(error);
+      return alert("Error submitting form: " + error.message);
+    }
+  };
+
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -125,8 +153,12 @@ export const EnquiryForm = () => {
 
     // If no errors, submit form
     if (Object.values(finalErrors).every((error) => error === "")) {
+      // Remove the `id` from each course object before submission
+      const coursesWithoutId = formData.courses.map(({ id, ...rest }) => rest); // Destructure and remove `id`
+
       const submissionData = {
         ...formData,
+        courses: coursesWithoutId, // Only send courses without `id`
         qualification:
           formData.qualification === "Others" && otherQualification
             ? otherQualification
@@ -134,7 +166,10 @@ export const EnquiryForm = () => {
         // Convert source array to a comma-separated string
         source: formData.source.join(", "),
       };
+
       console.log("Form Data: ", submissionData);
+
+      submitEnquiryReq(submissionData);
 
       // Clear form data after successful submission
       setFormData({
@@ -145,7 +180,7 @@ export const EnquiryForm = () => {
         branch: "",
         source: [],
         qualification: "",
-        courses: [],
+        courses: [], // Reset courses to empty array
       });
       setOtherQualification(""); // Reset otherQualification field after submission
     } else {
@@ -275,24 +310,14 @@ export const EnquiryForm = () => {
 
         <div className="mb-6">
           <p className="mb-2">Courses Registered For</p>
-          {[
-            "C & Data Structure",
-            "C++",
-            "C# .Net",
-            "ASP .Net",
-            "Adv .Net",
-            "Java",
-            "Adv. Java",
-            "Android/IOS Development",
-            "Others",
-          ].map((course) => (
+          {data?.map((course) => (
             <Checkbox
-              key={course}
-              label={course}
+              key={course.id}
+              label={course.courseName}
               name="courses"
-              value={course}
+              value={course.courseName}
               checked={formData.courses.some(
-                (item) => item.courseName === course
+                (item) => item.courseName === course.courseName
               )}
               onChange={handleChange}
             />
