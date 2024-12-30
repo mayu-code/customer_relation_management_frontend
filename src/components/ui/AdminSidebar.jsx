@@ -5,28 +5,26 @@ import {
   List,
   ListItem,
   ListItemPrefix,
-  ListItemSuffix,
-  Chip,
-  Accordion,
-  AccordionHeader,
-  AccordionBody,
 } from "@material-tailwind/react";
 import {
-  PresentationChartBarIcon,
-  ShoppingBagIcon,
   UserCircleIcon,
   Cog6ToothIcon,
-  InboxIcon,
   PowerIcon,
   Bars3Icon,
   XMarkIcon,
+  ChartPieIcon,
+  BookOpenIcon,
+  InboxIcon,
+  ClipboardIcon,
+  NewspaperIcon,
+  PencilSquareIcon,
+  AcademicCapIcon,
 } from "@heroicons/react/24/solid";
-import { ChevronRightIcon, ChevronDownIcon } from "@heroicons/react/24/outline";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { deleteUser } from "../../redux/slice/UserSlice";
 
-export const Sidebar = () => {
+export const Sidebar = ({ user }) => {
   const [open, setOpen] = useState(0);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // state to control sidebar visibility
 
@@ -53,7 +51,7 @@ export const Sidebar = () => {
   return (
     <>
       {/* Sidebar Toggle Button for Mobile */}
-      <div className="lg:hidden p-4">
+      <div className="lg:hidden absolute p-4">
         <button onClick={toggleSidebar}>
           <Bars3Icon className="h-6 w-6 text-gray-800" />
         </button>
@@ -61,8 +59,10 @@ export const Sidebar = () => {
 
       {/* Sidebar */}
       <Card
-        className={`fixed top-4 left-0 h-auto bg-gray-100 shadow-sm transition-transform transform ${
-          isSidebarOpen ? "translate-x-0 top-20" : "-translate-x-full"
+        className={`fixed top-0 left-0 h-auto bg-white shadow-sm transition-transform transform ${
+          isSidebarOpen
+            ? "translate-x-0 top-20 z-50 h-lvh"
+            : "-translate-x-full"
         } lg:relative lg:translate-x-0 w-64 p-4 mt-1`}
       >
         {/* Close Sidebar Button */}
@@ -82,30 +82,48 @@ export const Sidebar = () => {
         </div>
 
         <List>
-          <ListItem>
-            <ListItemPrefix>
-              <InboxIcon className="h-5 w-5" />
-            </ListItemPrefix>
-            Dashboard
-          </ListItem>
+          <NavLink
+            to={`${
+              user.role === "ADMIN" ? "/admin/dashboard" : "/manager/dashboard"
+            }`}
+          >
+            <ListItem>
+              <ListItemPrefix>
+                <ChartPieIcon className="h-5 w-5" />
+              </ListItemPrefix>
+              Dashboard
+            </ListItem>
+          </NavLink>
+          {user.role === "ADMIN" && (
+            <NavLink to="/admin/courses">
+              <ListItem>
+                <ListItemPrefix>
+                  <BookOpenIcon className="h-5 w-5" />
+                </ListItemPrefix>
+                Courses
+              </ListItem>
+            </NavLink>
+          )}
           <NavLink to="/manager/enquiries">
             <ListItem>
               <ListItemPrefix>
-                <InboxIcon className="h-5 w-5" />
+                <NewspaperIcon className="h-5 w-5" />
               </ListItemPrefix>
               Enquiries
             </ListItem>
           </NavLink>
-          <ListItem>
-            <ListItemPrefix>
-              <InboxIcon className="h-5 w-5" />
-            </ListItemPrefix>
-            Registrations
-          </ListItem>
+          <NavLink to="/manager/registrations">
+            <ListItem>
+              <ListItemPrefix>
+                <ClipboardIcon className="h-5 w-5" />
+              </ListItemPrefix>
+              Registrations
+            </ListItem>
+          </NavLink>
           <NavLink to="/manager/enquiry-form">
             <ListItem>
               <ListItemPrefix>
-                <InboxIcon className="h-5 w-5" />
+                <PencilSquareIcon className="h-5 w-5" />
               </ListItemPrefix>
               Enquiry Form
             </ListItem>
@@ -113,23 +131,23 @@ export const Sidebar = () => {
           <NavLink to="/manager/registration-form">
             <ListItem>
               <ListItemPrefix>
-                <InboxIcon className="h-5 w-5" />
+                <AcademicCapIcon className="h-5 w-5" />
               </ListItemPrefix>
               Registration Form
             </ListItem>
           </NavLink>
-          <ListItem>
-            <ListItemPrefix>
-              <UserCircleIcon className="h-5 w-5" />
-            </ListItemPrefix>
-            Profile
-          </ListItem>
-          <ListItem>
-            <ListItemPrefix>
-              <Cog6ToothIcon className="h-5 w-5" />
-            </ListItemPrefix>
-            Settings
-          </ListItem>
+          <NavLink
+            to={`${
+              user.role === "ADMIN" ? "/admin/profile" : "/manager/profile"
+            }`}
+          >
+            <ListItem>
+              <ListItemPrefix>
+                <UserCircleIcon className="h-5 w-5" />
+              </ListItemPrefix>
+              Profile
+            </ListItem>
+          </NavLink>
           <ListItem onClick={handleLogout}>
             <ListItemPrefix>
               <PowerIcon className="h-5 w-5" />

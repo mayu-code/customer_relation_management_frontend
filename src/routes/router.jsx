@@ -10,10 +10,15 @@ import { AdminProtectedRoute } from "./AdminProtectedRoute";
 import { AdminProfile } from "../pages/admin/AdminProfile";
 import { ManagerProfile } from "../pages/manager/ManagerProfile";
 import { ContactUs } from "../pages/ContactUs";
-import { EnquiryForm } from "../pages/EnquiryForm";
-import { RegistrationForm } from "../pages/RegistrationForm";
-import GradientInfotechForm from "../pages/manager/Form";
-import { Enquiries } from "../pages/manager/Enquiries";
+import { Enquiries } from "../pages/manager/enquiries/Enquiries";
+import { Registrations } from "../pages/manager/registrations/Registrations";
+import { EnquiryForm } from "../pages/manager/enquiry form/EnquiryForm";
+import { RegistrationForm } from "../pages/manager/registration form/RegistrationForm";
+import AdminDashboard from "../pages/admin/AdminDashboard";
+import ViewCourses from "../pages/admin/courses/ViewCourses";
+import ManagerDashboard from "../pages/admin/AdminDashboard";
+import { RegistrationDetail } from "../pages/manager/registrations/RegistrationDetail";
+import { EnquiryDetailPage } from "../pages/manager/enquiries/EnquiryDetail";
 
 export const router = createBrowserRouter([
   {
@@ -53,6 +58,10 @@ export const router = createBrowserRouter([
             element: <ManagerProfile />,
           },
           {
+            path: "/manager/dashboard",
+            element: <ManagerDashboard />,
+          },
+          {
             path: "/manager/enquiry-form",
             element: <EnquiryForm />,
           },
@@ -64,6 +73,18 @@ export const router = createBrowserRouter([
             path: "/manager/enquiries",
             element: <Enquiries />,
           },
+          {
+            path: "/manager/registrations",
+            element: <Registrations />,
+          },
+          {
+            path: "/manager/registration/:id",
+            element: <RegistrationDetail />,
+          },
+          {
+            path: "/manager/enquiry/:id",
+            element: <EnquiryDetailPage />,
+          },
         ],
       },
       {
@@ -73,6 +94,14 @@ export const router = createBrowserRouter([
           {
             path: "/admin/profile",
             element: <AdminProfile />,
+          },
+          {
+            path: "/admin/dashboard",
+            element: <AdminDashboard />,
+          },
+          {
+            path: "/admin/courses",
+            element: <ViewCourses />,
           },
         ],
       },

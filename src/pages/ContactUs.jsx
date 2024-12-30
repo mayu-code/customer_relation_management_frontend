@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import { Button, Input, Textarea, Typography } from "@material-tailwind/react";
+import { getRegistrations } from "../api/apiData";
+import { useQuery } from "@tanstack/react-query";
 
 export const ContactUs = () => {
   // Form state

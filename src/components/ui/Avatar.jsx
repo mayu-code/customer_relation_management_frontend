@@ -22,6 +22,11 @@ import { deleteUser } from "../../redux/slice/UserSlice";
 // Profile menu items generator
 const profileMenuItems = (role) => [
   {
+    label: "Dashboard",
+    icon: InboxArrowDownIcon,
+    link: role === "ADMIN" ? "/admin/dashboard" : "/manager/dashboard",
+  },
+  {
     label: "My Profile",
     icon: UserCircleIcon,
     link: role === "MANAGER" ? "/manager/profile" : "/admin/profile",
@@ -30,11 +35,6 @@ const profileMenuItems = (role) => [
     label: "Edit Profile",
     icon: Cog6ToothIcon,
     link: role === "MANAGER" ? "/manager/edit-profile" : "/admin/edit-profile",
-  },
-  {
-    label: "Inbox",
-    icon: InboxArrowDownIcon,
-    link: "/inbox",
   },
   {
     label: "Help",
@@ -86,6 +86,12 @@ export function ProfileAvatar({ user }) {
               "https://docs.material-tailwind.com/img/face-2.jpg"
             }
           />
+          <Typography
+            variant="h6"
+            className="text-lg mx-2 capitalize font-semibold text-gray-900 cursor-pointer"
+          >
+            {user?.name || "Guest"}
+          </Typography>
         </Button>
       </MenuHandler>
       <MenuList className="p-1">

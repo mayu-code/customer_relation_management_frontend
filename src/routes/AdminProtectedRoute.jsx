@@ -64,7 +64,7 @@ export const AdminProtectedRoute = () => {
   if (user1.role === "ADMIN") {
     return (
       <section className="flex gap-5">
-        <Sidebar />
+        <Sidebar user={user1} />
         <Outlet />
       </section>
     );

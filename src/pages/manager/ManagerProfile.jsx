@@ -57,7 +57,7 @@ export const ManagerProfile = () => {
   if (loading) return <div>Loading...</div>;
 
   return (
-    <div className="flex justify-center items-center my-20 bg-gray-50">
+    <div className="w-full max-w-[95%] h-lvh flex justify-center items-center py-10 bg-gray-50">
       <Card className="w-full max-w-lg shadow-lg">
         <CardHeader color="green" className="relative h-56">
           <img

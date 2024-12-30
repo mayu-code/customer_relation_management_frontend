@@ -65,8 +65,8 @@ export const ManagerProtectedRoute = () => {
   if (user1.role === "MANAGER") {
     return (
       <section className="flex justify-between">
-        <Sidebar />
-        <div className="w-full h-screen">
+        <Sidebar user={user1} />
+        <div className="w-full h-auto">
           <Outlet />
         </div>
       </section>

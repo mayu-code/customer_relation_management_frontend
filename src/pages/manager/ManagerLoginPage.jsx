@@ -59,7 +59,7 @@ export const ManagerLoginPage = () => {
         await fetchUserProfile(token);
 
         // Navigate to manager profile
-        navigate("/manager/profile");
+        navigate("/manager/dashboard");
       } else {
         throw new Error("Token not received.");
       }
