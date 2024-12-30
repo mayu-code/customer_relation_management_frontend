@@ -26,7 +26,9 @@ const SourceCheckboxGroup = ({
 
   return (
     <div className="mb-6">
-      <p className="mb-2">{label}</p>
+      <h2 className="text-lg font-semibold mb-2">
+        How Did You Come to Know About Us?
+      </h2>
       {/* Check if options is an array before using map */}
       {Array.isArray(options) && options.length > 0 ? (
         options.map((option) => (

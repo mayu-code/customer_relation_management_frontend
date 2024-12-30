@@ -184,8 +184,11 @@ export const EnquiryForm = () => {
 
   return (
     <div className="w-full max-w-[95%] mt-10 mx-auto p-6 bg-white shadow-md rounded-md">
-      <h1 className="text-xl font-semibold mb-4">Enquiry Form</h1>
+      <div className="text-center mb-6">
+        <h1 className="text-xl font-semibold ">Enquiry Form</h1>
+      </div>
       <form onSubmit={handleSubmit}>
+        <h2 className="font-semibold mb-4 text-lg">Personal Details</h2>
         <InputField
           label="Name"
           name="name"
@@ -224,7 +227,6 @@ export const EnquiryForm = () => {
           error={errors.branch}
         />
         <SourceCheckboxGroup
-          label="How Did You Come to Know About Us?"
           options={[
             "Google Search",
             "Reference",
@@ -240,7 +242,6 @@ export const EnquiryForm = () => {
         />
 
         <RadioGroup
-          label="Qualification"
           options={["BE", "BCA", "MCA", "Others"]}
           selectedValue={formData.qualification}
           onChange={handleChange}

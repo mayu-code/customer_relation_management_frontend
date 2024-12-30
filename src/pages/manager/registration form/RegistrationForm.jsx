@@ -264,7 +264,9 @@ export const RegistrationForm = () => {
 
   return (
     <div className="w-full max-w-[95%] mt-10 mx-auto p-6 bg-white shadow-md rounded-md">
-      <h1 className="text-xl font-semibold mb-4">Registration Form</h1>
+      <div className="mb-6 text-center">
+        <h1 className="text-xl font-semibold">Registration Form</h1>
+      </div>
       <form onSubmit={handleSubmit}>
         <PersonalDetails
           formData={formData}
@@ -279,7 +281,6 @@ export const RegistrationForm = () => {
         />
 
         <SourceCheckboxGroup
-          label="How Did You Come to Know About Us?"
           options={[
             "Google Search",
             "Reference",

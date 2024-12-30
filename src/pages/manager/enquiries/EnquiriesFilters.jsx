@@ -1,17 +1,18 @@
 import { Input, Select, Option } from "@material-tailwind/react";
 
-export const RegistrationFilters = ({
+export const EnquiriesFilters = ({
   searchQuery,
   idSearchQuery,
   filters,
   setSearchQuery,
   setIdSearchQuery,
   setFilters,
-  colleges = [],
-  branches = [],
-  qualifications = [],
-  courses = [],
+  colleges = [], // Default to empty array if undefined
+  branches = [], // Default to empty array if undefined
+  courses = [], // Default to empty array if undefined
+  qualifications = [], // Default to empty array if undefined
 }) => {
+  // Handle changes for each filter field
   const handleCollegeChange = (value) => {
     setFilters((prev) => ({ ...prev, college: value }));
   };
@@ -20,12 +21,12 @@ export const RegistrationFilters = ({
     setFilters((prev) => ({ ...prev, branch: value }));
   };
 
-  const handleQualificationChange = (value) => {
-    setFilters((prev) => ({ ...prev, qualification: value }));
-  };
-
   const handleCourseChange = (value) => {
     setFilters((prev) => ({ ...prev, course: value }));
+  };
+
+  const handleQualificationChange = (value) => {
+    setFilters((prev) => ({ ...prev, qualification: value }));
   };
 
   return (
@@ -35,7 +36,7 @@ export const RegistrationFilters = ({
           type="text"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          label="Search by Name"
+          label="Search by Name or Email"
           outline
         />
       </div>
@@ -53,7 +54,7 @@ export const RegistrationFilters = ({
       {/* College Select */}
       <div>
         <Select
-          value={filters.college}
+          value={filters.college || ""}
           onChange={(value) => handleCollegeChange(value)}
           label="Select College"
           variant="outlined"

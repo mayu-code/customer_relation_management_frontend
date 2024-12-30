@@ -206,3 +206,48 @@ export const sendEmail = (jwt, emailReq) => {
     },
   });
 };
+
+export const searchEnquiriesById = (jwt, id) => {
+  return api.get(`/manager/searchEnquiryFormById/${id}`, {
+    headers: {
+      // Corrected from 'Headers' to 'headers'
+      Authorization: `Bearer ${jwt}`,
+    },
+  });
+};
+
+export const searchEnquiriesByName = (jwt, name) => {
+  return api.get(`/manager/searchEnquiryFormByName/${name}`, {
+    headers: {
+      // Corrected from 'Headers' to 'headers'
+      Authorization: `Bearer ${jwt}`,
+    },
+  });
+};
+
+export const getDistinctCollege = (jwt) => {
+  return api.get("/manager/getDistinctEnquiryCollege", {
+    headers: {
+      // Corrected from 'Headers' to 'headers'
+      Authorization: `Bearer ${jwt}`,
+    },
+  });
+};
+
+export const getDistinctBranch = (jwt) => {
+  return api.get("/manager/getDistinctEnquiryBranch", {
+    headers: {
+      // Corrected from 'Headers' to 'headers'
+      Authorization: `Bearer ${jwt}`,
+    },
+  });
+};
+
+export const getDistinctQualification = (jwt) => {
+  return api.get("/manager/getDistinctQualification", {
+    headers: {
+      // Corrected from 'Headers' to 'headers'
+      Authorization: `Bearer ${jwt}`,
+    },
+  });
+};

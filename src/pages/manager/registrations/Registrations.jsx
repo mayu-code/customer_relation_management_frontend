@@ -7,6 +7,7 @@ import {
   getAllCollege,
   getAllBranch,
   getAllQualification,
+  getDistinctCourse,
 } from "../../../api/apiData";
 import { RegistrationFilters } from "./RegistrationFilters";
 import { RegistrationTable } from "./RegistrationTable";
@@ -21,6 +22,7 @@ export const Registrations = () => {
     college: "",
     branch: "",
     qualification: "",
+    course: "",
   });
 
   // Fetching the list of colleges, branches, and qualifications dynamically
@@ -52,6 +54,15 @@ export const Registrations = () => {
       },
     });
 
+  const { data: courseData, isLoading: loadingCourses } = useQuery({
+    queryKey: ["courses"],
+    queryFn: async () => {
+      const jwt = localStorage.getItem("jwt");
+      const res = await getDistinctCourse(jwt);
+      return res?.data?.data || [];
+    },
+  });
+
   const { data, isLoading, error } = useQuery({
     queryKey: ["registrations"],
     queryFn: async () => {
@@ -63,10 +74,9 @@ export const Registrations = () => {
 
   useEffect(() => {
     if (data) {
-      // Reverse the order of registrations to show most recent first
-      const reversedRegistrations = [...data].reverse();
-      setRegistrations(reversedRegistrations);
-      setFilteredRegistrations(reversedRegistrations);
+      // Set registrations without reversing
+      setRegistrations(data);
+      setFilteredRegistrations(data); // Set filteredRegistrations to the full list initially
     }
   }, [data]);
 
@@ -140,6 +150,17 @@ export const Registrations = () => {
         );
       }
 
+      // Filter by course
+      if (filters.course) {
+        filtered = filtered.filter((enquiry) =>
+          enquiry.courses.some((course) =>
+            course.courseName
+              .toLowerCase()
+              .includes(filters.course.toLowerCase())
+          )
+        );
+      }
+
       setFilteredRegistrations(filtered);
     };
 
@@ -172,6 +193,7 @@ export const Registrations = () => {
         colleges={collegesData}
         branches={branchesData}
         qualifications={qualificationsData}
+        courses={courseData}
       />
       <RegistrationTable registrations={filteredRegistrations} />
     </div>

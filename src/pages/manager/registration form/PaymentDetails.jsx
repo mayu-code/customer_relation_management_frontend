@@ -12,6 +12,7 @@ const PaymentDetails = ({ formData, errors, handleChange, paymentTypes }) => {
           value={formData.totalFees}
           onChange={handleChange}
           error={errors.totalFees}
+          disabled
         />
         {errors.totalFees && (
           <p className="text-red-500 text-sm">{errors.totalFees}</p>
@@ -56,7 +57,7 @@ const PaymentDetails = ({ formData, errors, handleChange, paymentTypes }) => {
         )}
       </div>
       <div className="mt-4">
-        <p className="mb-2">Payment Type</p>
+        <h2 className="text-lg font-semibold mb-2">Payment Type</h2>
         {paymentTypes.map((type) => (
           <Radio
             key={type}

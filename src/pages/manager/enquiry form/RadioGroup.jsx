@@ -15,7 +15,7 @@ const RadioGroup = ({ label, options, selectedValue, onChange, error }) => {
 
   return (
     <div className="mb-6">
-      <p className="mb-2">{label}</p>
+      <h2 className="font-semibold mb-4 text-lg">Qualification</h2>
       {options.map((option) => (
         <Radio
           key={option}

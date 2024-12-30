@@ -34,7 +34,7 @@ const CheckboxGroup = ({
 
   return (
     <div className="mb-6">
-      <p className="mb-2">{label}</p>
+      <h2 className="font-semibold mb-4 text-lg">Courses Registered For</h2>
       {Array.isArray(options) && options.length > 0 ? (
         options.map((option) => (
           <Checkbox

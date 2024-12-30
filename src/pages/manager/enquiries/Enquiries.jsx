@@ -1,24 +1,39 @@
-import { useEffect, useState } from "react";
-import { getEnquiries } from "../../../api/apiData";
+import { useState, useEffect, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { SearchInput } from "./SearchInput";
-import { FilterSelect } from "./FilterSelect";
+import {
+  searchEnquiriesById,
+  searchEnquiriesByName,
+  getEnquiries,
+  getDistinctCollege,
+  getDistinctCourse,
+  getDistinctBranch,
+  getDistinctQualification,
+} from "../../../api/apiData";
 import { EnquiriesTable } from "./EnquiriesTable";
+import { debounce } from "lodash";
+import { EnquiriesFilters } from "./EnquiriesFilters";
 
 export const Enquiries = () => {
-  const [searchQuery, setSearchQuery] = useState("");
-  const [idSearchQuery, setIdSearchQuery] = useState("");
+  const [searchQuery, setSearchQuery] = useState(""); // For searching by name or email
+  const [idSearchQuery, setIdSearchQuery] = useState(""); // For searching by ID
   const [filters, setFilters] = useState({
     college: "",
     branch: "",
     course: "",
     qualification: "",
   });
-
   const [enquiries, setEnquiries] = useState([]);
+  const [filteredEnquiries, setFilteredEnquiries] = useState([]);
   const jwt = localStorage.getItem("jwt");
 
-  const getAllEnquiries = async () => {
+  // Debounce function for search
+  const debounceSearch = useCallback(
+    debounce((query, callback) => callback(query), 300),
+    []
+  );
+
+  // Fetch all enquiries
+  const fetchAllEnquiries = async () => {
     try {
       const res = await getEnquiries(jwt);
       return res?.data?.data || [];
@@ -30,56 +45,124 @@ export const Enquiries = () => {
 
   const { data } = useQuery({
     queryKey: ["enquiries"],
-    queryFn: getAllEnquiries,
+    queryFn: fetchAllEnquiries,
     refetchOnMount: true,
   });
 
   useEffect(() => {
     if (data) {
-      const reversedData = [...data].reverse();
-      setEnquiries(reversedData);
+      setEnquiries(data); // Set enquiries without reversing
+      setFilteredEnquiries(data); // Set filteredEnquiries to the full list initially
     }
   }, [data]);
 
-  const filteredEnquiries = enquiries.filter((enquiry) => {
-    let matches = true;
+  // Fetch distinct options for filters
+  const { data: collegeData } = useQuery({
+    queryKey: ["distinctCollege"],
+    queryFn: () => getDistinctCollege(jwt),
+    enabled: jwt !== "",
+  });
 
+  const { data: courseData } = useQuery({
+    queryKey: ["distinctCourse"],
+    queryFn: () => getDistinctCourse(jwt),
+    enabled: jwt !== "",
+  });
+
+  // console.log(courseData);
+
+  const { data: branchData } = useQuery({
+    queryKey: ["distinctBranch"],
+    queryFn: () => getDistinctBranch(jwt),
+    enabled: jwt !== "",
+  });
+
+  const { data: qualificationData } = useQuery({
+    queryKey: ["distinctQualification"],
+    queryFn: () => getDistinctQualification(jwt),
+    enabled: jwt !== "",
+  });
+
+  // Dynamically search by ID
+  const { data: idSearchResults } = useQuery({
+    queryKey: ["searchEnquiriesById", idSearchQuery],
+    queryFn: () => searchEnquiriesById(jwt, idSearchQuery),
+    enabled: idSearchQuery !== "", // Only search if there is an ID query
+    onSuccess: (data) => {
+      setFilteredEnquiries(data?.data?.data || []);
+    },
+    onError: (error) => {
+      console.error("Error searching by ID:", error);
+    },
+  });
+
+  // Dynamically search by Name or Email
+  const { data: nameSearchResults } = useQuery({
+    queryKey: ["searchEnquiriesByName", searchQuery],
+    queryFn: () => searchEnquiriesByName(jwt, searchQuery),
+    enabled: searchQuery !== "", // Only search if there is a name query
+    onSuccess: (data) => {
+      setFilteredEnquiries(data?.data?.data || []);
+    },
+    onError: (error) => {
+      console.error("Error searching by name:", error);
+    },
+  });
+
+  // Filtering Enquiries based on selected filters
+  useEffect(() => {
+    let filtered = [...enquiries]; // Start with all enquiries
+
+    // Filter by name or email
     if (searchQuery) {
-      matches =
-        enquiry.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        enquiry.email.toLowerCase().includes(searchQuery.toLowerCase());
-    }
-
-    if (matches && idSearchQuery) {
-      matches = enquiry.id.toString().includes(idSearchQuery);
-    }
-
-    if (matches && filters.college) {
-      matches = enquiry.college
-        ?.toLowerCase()
-        .includes(filters.college.toLowerCase());
-    }
-
-    if (matches && filters.branch) {
-      matches = enquiry.branch
-        ?.toLowerCase()
-        .includes(filters.branch.toLowerCase());
-    }
-
-    if (matches && filters.course) {
-      matches = enquiry.courses.some((course) =>
-        course.courseName.toLowerCase().includes(filters.course.toLowerCase())
+      filtered = filtered.filter(
+        (enquiry) =>
+          enquiry.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          enquiry.email.toLowerCase().includes(searchQuery.toLowerCase())
       );
     }
 
-    if (matches && filters.qualification) {
-      matches = enquiry.qualification
-        ?.toLowerCase()
-        .includes(filters.qualification.toLowerCase());
+    // Filter by ID
+    if (idSearchQuery) {
+      filtered = filtered.filter((enquiry) =>
+        enquiry.id.toString().includes(idSearchQuery)
+      );
     }
 
-    return matches;
-  });
+    // Filter by college
+    if (filters.college) {
+      filtered = filtered.filter((enquiry) =>
+        enquiry.college?.toLowerCase().includes(filters.college.toLowerCase())
+      );
+    }
+
+    // Filter by branch
+    if (filters.branch) {
+      filtered = filtered.filter((enquiry) =>
+        enquiry.branch?.toLowerCase().includes(filters.branch.toLowerCase())
+      );
+    }
+
+    // Filter by course
+    if (filters.course) {
+      filtered = filtered.filter((enquiry) =>
+        enquiry.courses.some((course) =>
+          course.courseName.toLowerCase().includes(filters.course.toLowerCase())
+        )
+      );
+    }
+
+    // Filter by qualification
+    if (filters.qualification) {
+      filtered = filtered.filter((enquiry) =>
+        enquiry.qualification
+          ?.toLowerCase()
+          .includes(filters.qualification.toLowerCase())
+      );
+    }
+
+    setFilteredEnquiries(filtered); // Update the filtered enquiries
+  }, [searchQuery, idSearchQuery, filters, enquiries]);
 
   const handleSelectChange = (name, value) => {
     setFilters((prevFilters) => ({
@@ -95,69 +178,19 @@ export const Enquiries = () => {
       </h1>
 
       {/* Filters and Search Section */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-6">
-        <div>
-          <SearchInput
-            label="Search by Name or Email"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full"
-          />
-        </div>
-        <div>
-          <SearchInput
-            label="Search by ID"
-            value={idSearchQuery}
-            onChange={(e) => setIdSearchQuery(e.target.value)}
-            className="w-full"
-          />
-        </div>
-        <div>
-          <FilterSelect
-            name="college"
-            value={filters.college}
-            onChange={handleSelectChange}
-            options={["SB Jain Institute", "XYZ University", "ABC College"]}
-            className="w-full"
-          />
-        </div>
-        <div>
-          <FilterSelect
-            name="branch"
-            value={filters.branch}
-            onChange={handleSelectChange}
-            options={[
-              "Computer Science",
-              "Mechanical Engineering",
-              "Electrical Engineering",
-              "Civil Engineering",
-            ]}
-            className="w-full"
-          />
-        </div>
-        <div>
-          <FilterSelect
-            name="course"
-            value={filters.course}
-            onChange={handleSelectChange}
-            options={["BTech", "MCA", "MTech", "Diploma in Engineering"]}
-            className="w-full"
-          />
-        </div>
-        <div>
-          <FilterSelect
-            name="qualification"
-            value={filters.qualification}
-            onChange={handleSelectChange}
-            options={[
-              "BSc Computer Science",
-              "BTech Electrical",
-              "Diploma in Engineering",
-              "MSc Civil Engineering",
-            ]}
-            className="w-full"
-          />
-        </div>
+      <div className="mb-6">
+        <EnquiriesFilters
+          searchQuery={searchQuery}
+          idSearchQuery={idSearchQuery}
+          filters={filters}
+          setSearchQuery={setSearchQuery}
+          setIdSearchQuery={setIdSearchQuery}
+          setFilters={setFilters}
+          colleges={collegeData?.data?.data || []}
+          branches={branchData?.data?.data || []}
+          courses={courseData?.data?.data || []}
+          qualifications={qualificationData?.data?.data || []}
+        />
       </div>
 
       {/* Enquiries Table */}
