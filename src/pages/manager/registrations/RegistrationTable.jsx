@@ -1,4 +1,5 @@
 import { EyeIcon } from "@heroicons/react/24/solid";
+import { Button } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
 
 export const RegistrationTable = ({ registrations }) => {
@@ -6,6 +7,10 @@ export const RegistrationTable = ({ registrations }) => {
 
   const handleRowClick = (id) => {
     navigate(`/manager/registration/${id}`);
+  };
+
+  const handleCreateButtonClick = () => {
+    navigate("/manager/registration-form");
   };
 
   return (
@@ -58,8 +63,16 @@ export const RegistrationTable = ({ registrations }) => {
             ))
           ) : (
             <tr>
-              <td colSpan="9" className="px-4 py-2 text-center">
-                No registrations found.
+              <td
+                colSpan="10"
+                className="px-4 py-2 text-center border border-gray-300"
+              >
+                <div className="p-2 flex flex-col gap-2 justify-center items-center">
+                  <p>No registrations found. create one.</p>
+                  <Button size="sm" onClick={handleCreateButtonClick}>
+                    Create
+                  </Button>
+                </div>
               </td>
             </tr>
           )}

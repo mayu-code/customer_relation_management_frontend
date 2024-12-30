@@ -261,6 +261,7 @@ export const EnquiryDetailPage = () => {
                   onChange={handleChange}
                   className="w-full"
                   placeholder="Enter enquiry type"
+                  required
                 />
                 {formErrors.enquiryType && (
                   <p className="text-red-500 text-sm">
@@ -276,6 +277,7 @@ export const EnquiryDetailPage = () => {
                   onChange={handleChange}
                   className="w-full"
                   rows="4"
+                  required
                 />
                 {formErrors.enquiryDescription && (
                   <p className="text-red-500 text-sm">
@@ -303,32 +305,29 @@ export const EnquiryDetailPage = () => {
                 className="flex flex-col p-2 gap-4 overflow-y-auto"
                 style={{ maxHeight: "300px" }} // Set a fixed height for the scrollable area
               >
-                {enquiryDetails
-                  .slice() // Create a shallow copy to avoid mutating the original array
-                  .reverse() // Reverse the order
-                  .map((detail) => (
-                    <div
-                      key={detail.id}
-                      className="p-4 border rounded-lg shadow-md"
-                    >
-                      <div className="flex px-2 justify-between">
-                        <h4 className="text-lg font-semibold mb-2">
-                          {detail.enquiryType}
-                        </h4>
-                        <p className="text-sm text-gray-700">
-                          <strong>Date:</strong> {detail.enquiryDate || "N/A"}
-                        </p>
-                      </div>
-                      <div>
-                        <p className="text-sm p-2 mt-2 border rounded-lg border-gray-500 h-20">
-                          {detail.enquiryDescription}
-                        </p>
-                      </div>
+                {enquiryDetails.map((detail) => (
+                  <div
+                    key={detail.id}
+                    className="p-4 border rounded-lg shadow-md"
+                  >
+                    <div className="flex px-2 justify-between">
+                      <h4 className="text-lg font-semibold mb-2">
+                        {detail.enquiryType}
+                      </h4>
+                      <p className="text-sm text-gray-700">
+                        <strong>Date:</strong> {detail.enquiryDate || "N/A"}
+                      </p>
                     </div>
-                  ))}
+                    <div>
+                      <p className="text-sm p-2 mt-2 border rounded-lg border-gray-500 h-20">
+                        {detail.enquiryDescription}
+                      </p>
+                    </div>
+                  </div>
+                ))}
               </div>
             ) : (
-              <p>No enquiry details found for this enquiry.</p>
+              <p>No enquiry details found for this enquiry. create one</p>
             )}
           </div>
         </div>

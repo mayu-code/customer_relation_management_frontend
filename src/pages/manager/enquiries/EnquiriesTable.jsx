@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types */
 // EnquiriesTable.jsx
 import { EyeIcon } from "@heroicons/react/24/solid";
+import { Button } from "@material-tailwind/react";
 
 import { useNavigate } from "react-router-dom";
 
@@ -9,6 +10,10 @@ export const EnquiriesTable = ({ enquiries }) => {
 
   const handleRowClick = (id) => {
     navigate(`/manager/enquiry/${id}`);
+  };
+
+  const handleCreateButtonClick = () => {
+    navigate("/manager/enquiry-form");
   };
 
   return (
@@ -70,10 +75,15 @@ export const EnquiriesTable = ({ enquiries }) => {
           ) : (
             <tr>
               <td
-                colSpan="8"
+                colSpan="9"
                 className="px-4 py-2 text-center border border-gray-300"
               >
-                No enquiries found.
+                <div className="p-2 flex flex-col gap-2 justify-center items-center">
+                  <p>No enquiries found. create one</p>
+                  <Button size="sm" onClick={handleCreateButtonClick}>
+                    Create
+                  </Button>
+                </div>
               </td>
             </tr>
           )}

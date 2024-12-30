@@ -8,7 +8,7 @@ const CheckboxGroup = ({
 }) => {
   return (
     <div className="mb-6">
-      <p className="mb-2">Select Courses</p>
+      <h2 className="text-lg font-semibold mb-2">Select Course</h2>
       {courses.map((course) => (
         <Checkbox
           key={course.courseName}
