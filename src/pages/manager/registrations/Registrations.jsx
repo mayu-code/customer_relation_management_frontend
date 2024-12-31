@@ -72,6 +72,8 @@ export const Registrations = () => {
     },
   });
 
+  // console.log(data);
+
   useEffect(() => {
     if (data) {
       // Set registrations without reversing
@@ -153,7 +155,7 @@ export const Registrations = () => {
       // Filter by course
       if (filters.course) {
         filtered = filtered.filter((enquiry) =>
-          enquiry.courses.some((course) =>
+          enquiry.registeredCourses.some((course) =>
             course.courseName
               .toLowerCase()
               .includes(filters.course.toLowerCase())
