@@ -268,3 +268,12 @@ export const updateEquiryForm = (jwt, enquiryFormReq) => {
     },
   });
 };
+
+export const payAmount = (jwt, payReq) => {
+  return api.post("/manager/payAmount", payReq, {
+    headers: {
+      // Corrected from 'Headers' to 'headers'
+      Authorization: `Bearer ${jwt}`,
+    },
+  });
+};

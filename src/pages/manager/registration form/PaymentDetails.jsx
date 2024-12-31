@@ -12,7 +12,7 @@ const PaymentDetails = ({ formData, errors, handleChange, paymentTypes }) => {
           value={formData.totalFees}
           onChange={handleChange}
           error={errors.totalFees}
-          disabled
+          readOnly
         />
         {errors.totalFees && (
           <p className="text-red-500 text-sm">{errors.totalFees}</p>

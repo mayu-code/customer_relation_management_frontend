@@ -1,6 +1,12 @@
 import { useState, useEffect } from "react";
 import { Button, Input, Textarea } from "@material-tailwind/react";
-import { Dialog, DialogHeader, DialogBody, DialogFooter } from "@material-tailwind/react";
+import {
+  Dialog,
+  DialogHeader,
+  DialogBody,
+  DialogFooter,
+} from "@material-tailwind/react";
+import { sendEmail } from "../../../api/apiData";
 
 export const MailSend = ({ isModalOpen, setIsModalOpen, selectedEntry }) => {
   const [emailForm, setEmailForm] = useState({
@@ -16,7 +22,7 @@ export const MailSend = ({ isModalOpen, setIsModalOpen, selectedEntry }) => {
     if (selectedEntry) {
       setEmailForm({
         name: selectedEntry.name, // Prefill name for display
-        to: selectedEntry.email,  // Prefill "to" field with selected entry's email
+        to: selectedEntry.email, // Prefill "to" field with selected entry's email
         subject: "",
         body: "",
       });
@@ -26,6 +32,16 @@ export const MailSend = ({ isModalOpen, setIsModalOpen, selectedEntry }) => {
   // Handle input field changes in the email form
   const handleEmailFormChange = (e) => {
     setEmailForm({ ...emailForm, [e.target.name]: e.target.value });
+  };
+
+  const sendEmailToStudent = async (emailReq) => {
+    try {
+      const jwt = localStorage.getItem("jwt");
+      const res = await sendEmail(jwt, emailReq);
+      return res;
+    } catch (error) {
+      return console.log(error);
+    }
   };
 
   // Handle form submission
@@ -52,19 +68,15 @@ export const MailSend = ({ isModalOpen, setIsModalOpen, selectedEntry }) => {
     console.log("Email Form Submitted", emailData);
 
     // Send the data to the back-end
-    fetch("/api/send-email", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(emailData),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Email sent successfully:", data);
-        setIsModalOpen(false); // Close the modal
-      })
-      .catch((error) => {
-        console.error("Error sending email:", error);
-      });
+    sendEmailToStudent(emailData);
+    alert("Email Send Successfully!!");
+    setIsModalOpen(false);
+    setEmailForm({
+      name: "",
+      to: "",
+      subject: "",
+      body: "",
+    });
   };
 
   return (
@@ -72,6 +84,9 @@ export const MailSend = ({ isModalOpen, setIsModalOpen, selectedEntry }) => {
       <DialogHeader>Send Email</DialogHeader>
       <DialogBody>
         <form onSubmit={handleEmailSubmit}>
+          <div className="mb-2">
+            <strong className="text-black">Send Email To: </strong>
+          </div>
           <div className="mb-4">
             <Input
               placeholder="Recipient Name"
@@ -105,7 +120,6 @@ export const MailSend = ({ isModalOpen, setIsModalOpen, selectedEntry }) => {
           </div>
           <div className="mb-4">
             <Textarea
-              placeholder="Enter Email Body"
               label="Body"
               name="body"
               value={emailForm.body}
@@ -116,7 +130,7 @@ export const MailSend = ({ isModalOpen, setIsModalOpen, selectedEntry }) => {
             )}
           </div>
 
-          <DialogFooter>
+          <DialogFooter className="flex gap-2">
             <Button type="submit" variant="filled" color="green">
               Send Email
             </Button>

@@ -19,6 +19,7 @@ import {
   NewspaperIcon,
   PencilSquareIcon,
   AcademicCapIcon,
+  CalendarDaysIcon,
 } from "@heroicons/react/24/solid";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -123,7 +124,7 @@ export const Sidebar = ({ user }) => {
           <NavLink to="/manager/due-dates">
             <ListItem>
               <ListItemPrefix>
-                <PencilSquareIcon className="h-5 w-5" />
+                <CalendarDaysIcon className="h-5 w-5" />
               </ListItemPrefix>
               Due Dates
             </ListItem>
