@@ -1,4 +1,4 @@
-import { Input, Select, Option } from "@material-tailwind/react";
+import { Input, Select, Option, MenuItem } from "@material-tailwind/react";
 
 export const EnquiriesFilters = ({
   searchQuery,

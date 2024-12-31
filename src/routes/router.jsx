@@ -19,6 +19,7 @@ import ViewCourses from "../pages/admin/courses/ViewCourses";
 import ManagerDashboard from "../pages/admin/AdminDashboard";
 import { RegistrationDetail } from "../pages/manager/registrations/RegistrationDetail";
 import { EnquiryDetailPage } from "../pages/manager/enquiries/EnquiryDetail";
+import { DueDate } from "../pages/manager/dueDateStudents/DueDate";
 
 export const router = createBrowserRouter([
   {
@@ -84,6 +85,10 @@ export const router = createBrowserRouter([
           {
             path: "/manager/enquiry/:id",
             element: <EnquiryDetailPage />,
+          },
+          {
+            path: "/manager/due-dates",
+            element: <DueDate />,
           },
         ],
       },

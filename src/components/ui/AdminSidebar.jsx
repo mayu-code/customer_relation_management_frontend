@@ -120,6 +120,14 @@ export const Sidebar = ({ user }) => {
               Registrations
             </ListItem>
           </NavLink>
+          <NavLink to="/manager/due-dates">
+            <ListItem>
+              <ListItemPrefix>
+                <PencilSquareIcon className="h-5 w-5" />
+              </ListItemPrefix>
+              Due Dates
+            </ListItem>
+          </NavLink>
           <NavLink to="/manager/enquiry-form">
             <ListItem>
               <ListItemPrefix>
