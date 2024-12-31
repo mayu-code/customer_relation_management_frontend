@@ -251,3 +251,12 @@ export const getDistinctQualification = (jwt) => {
     },
   });
 };
+
+export const getDueRegistration = (jwt) => {
+  return api.get("/manager/getDueForm", {
+    headers: {
+      // Corrected from 'Headers' to 'headers'
+      Authorization: `Bearer ${jwt}`,
+    },
+  });
+};
