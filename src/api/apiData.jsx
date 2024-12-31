@@ -251,3 +251,12 @@ export const getDistinctQualification = (jwt) => {
     },
   });
 };
+
+export const updateEquiryForm = (jwt, enquiryFormReq) => {
+  return api.post("/manager/updateEnquiry", enquiryFormReq, {
+    headers: {
+      // Corrected from 'Headers' to 'headers'
+      Authorization: `Bearer ${jwt}`,
+    },
+  });
+};
