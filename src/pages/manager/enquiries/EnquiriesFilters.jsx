@@ -1,4 +1,4 @@
-import { Input, Select, Option, MenuItem } from "@material-tailwind/react";
+import { Input, Option, Select } from "@material-tailwind/react";
 
 export const EnquiriesFilters = ({
   searchQuery,
@@ -55,7 +55,9 @@ export const EnquiriesFilters = ({
       <div>
         <Select
           value={filters.college || ""}
-          onChange={(value) => handleCollegeChange(value)}
+          onChange={(value) => {
+            handleCollegeChange(value);
+          }}
           label="Select College"
           variant="outlined"
         >

@@ -251,9 +251,17 @@ export const getDistinctQualification = (jwt) => {
     },
   });
 };
-
 export const getDueRegistration = (jwt) => {
   return api.get("/manager/getDueForm", {
+    headers: {
+      // Corrected from 'Headers' to 'headers'
+      Authorization: `Bearer ${jwt}`,
+    },
+  });
+};
+
+export const updateEquiryForm = (jwt, enquiryFormReq) => {
+  return api.post("/manager/updateEnquiry", enquiryFormReq, {
     headers: {
       // Corrected from 'Headers' to 'headers'
       Authorization: `Bearer ${jwt}`,

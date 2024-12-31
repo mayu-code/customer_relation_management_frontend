@@ -1,13 +1,14 @@
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { PencilIcon } from "@heroicons/react/24/solid";
+import { PencilIcon, XCircleIcon } from "@heroicons/react/24/solid";
 import {
   addEnquiryDetail,
   getCources,
   getEnquiriesById,
   getEnquiryDetail,
   sendEmail,
+  updateEquiryForm,
 } from "../../../api/apiData";
 import {
   Button,
@@ -30,7 +31,6 @@ export const EnquiryDetailPage = () => {
     data: enquiry,
     isLoading,
     isError,
-    error, // Capture the error object
   } = useQuery({
     queryKey: ["enquiries", id], // Unique query key
     queryFn: async () => {
@@ -57,10 +57,12 @@ export const EnquiryDetailPage = () => {
 
   const [editFields, setEditFields] = useState({});
   const [showUpdateButton, setShowUpdateButton] = useState(false);
+  const [showDeleteButton, setShowDeleteButton] = useState(false);
   const [selectedCourses, setSelectedCourses] = useState([]);
-  const [courseError, setCourseError] = useState(null);
+  const navigate = useNavigate();
 
   const handleEditClick = (field) => {
+    setShowDeleteButton(true);
     setEditFields((prev) => ({ ...prev, [field]: enquiry[field] }));
 
     if (field === "courses") {
@@ -73,6 +75,12 @@ export const EnquiryDetailPage = () => {
       // For other fields, set them as editable
       setEditFields((prev) => ({ ...prev, [field]: enquiry[field] }));
     }
+  };
+
+  const handleCancelClick = () => {
+    setEditFields({});
+    setShowDeleteButton(false);
+    setShowUpdateButton(false);
   };
 
   useEffect(() => {
@@ -90,15 +98,6 @@ export const EnquiryDetailPage = () => {
     const { name, value } = e.target;
     setSelectedCourses(value); // Update state directly
     setShowUpdateButton(true); // Show the update button
-  };
-
-  const handleSave = async () => {
-    try {
-      console.log("Updated Courses:", selectedCourses);
-      alert("Courses updated successfully!");
-    } catch (error) {
-      console.error("Error updating courses", error);
-    }
   };
 
   // State for form values
@@ -244,24 +243,6 @@ export const EnquiryDetailPage = () => {
       "qualification",
     ]; // Editable fields excluding courses
 
-    // Identify courses that are still selected (either newly selected or remain selected)
-    const updatedCourses = selectedCourses
-      .map((course) => {
-        const existingCourse = enquiry.courses.find(
-          (existing) => existing.id === course.id
-        );
-        if (existingCourse) {
-          // If the course was previously selected and remains selected, send the full course object
-          return course;
-        } // Do not include courses that are not selected in the update
-      })
-      .filter(Boolean); // Remove any null entries (courses that are not selected)
-
-    const coursesWithoutId = selectedCourses.map((course) => {
-      const { id, ...courseWithoutId } = course; // Destructure to exclude id
-      return courseWithoutId; // Return the rest of the course object
-    });
-
     // Prepare the payload for backend submission
     const payload = {
       id: enquiry.id, // Include the enquiry ID for the update
@@ -270,19 +251,24 @@ export const EnquiryDetailPage = () => {
           editFields[field] !== undefined ? editFields[field] : enquiry[field]; // Add editable fields to payload
         return acc;
       }, {}),
-      // Include the updated selected courses (full objects of selected courses)
-      courses: [...coursesWithoutId, ...updatedCourses],
+      // Include the courses (with id for existing and without id for new)
+      courses: selectedCourses,
     };
 
     console.log("Full Payload to send:", payload);
 
-    // try {
-    //   // Assuming updateEnquiry function sends the updated data to the backend
-    //   await updateEnquiry(payload);
-    //   alert("Enquiry updated successfully!");
-    // } catch (error) {
-    //   console.error("Error updating enquiry", error);
-    // }
+    try {
+      // Assuming updateEnquiry function sends the updated data to the backend
+      await updateEquiryForm(jwt, payload);
+      setEditFields({});
+      setShowUpdateButton(false);
+      alert("Enquiry updated successfully!");
+      navigate(0);
+    } catch (error) {
+      console.error("Error updating enquiry", error);
+      setEditFields({});
+      setShowUpdateButton(false);
+    }
   };
 
   // Handle email form submission
@@ -314,37 +300,55 @@ export const EnquiryDetailPage = () => {
     return <div>Error loading enquiry details. Please try again later.</div>;
   }
 
+  // console.log(enquiry);
+
   return (
     <div className="bg-white p-6 shadow-sm mt-10 rounded-md">
       <div className="flex justify-between">
         <div className="w-full">
           <div className="flex justify-between">
             <h2 className="text-3xl font-semibold mb-4">Enquiry Details</h2>
-            <div>
+            <div className="space-x-2">
+              {showUpdateButton && (
+                <Button onClick={handleUpdate} variant="filled">
+                  Update
+                </Button>
+              )}
+              {showDeleteButton && (
+                <Button onClick={() => handleCancelClick()}>Cancel</Button>
+              )}
               <Button variant="filled" onClick={() => setIsModalOpen(true)}>
                 Send Email
               </Button>
             </div>
           </div>
-          <div className="flex flex-col">
-            <div className="grid grid-cols-2 gap-10 text-2xl mt-10">
+          <div className="flex flex-col p-4">
+            <div className="grid grid-cols-2 gap-14 text-xl mt-10">
+              <p>
+                <strong>Enquiry ID:</strong> {enquiry.id}
+              </p>
+              <p>
+                <strong>Enquiry Date:</strong> {enquiry.enquiryDate}
+              </p>
               {[
-                { label: "Name", field: "name" },
-                { label: "Email", field: "email" },
-                { label: "Contact", field: "contact" },
-                { label: "Branch", field: "branch" },
-                { label: "College", field: "college" },
-                { label: "Qualification", field: "qualification" },
+                { label: "Student Name", field: "name" },
+                { label: "Student Email", field: "email" },
+                { label: "Student Contact", field: "contact" },
+                { label: "Student Branch", field: "branch" },
+                { label: "Student College", field: "college" },
+                { label: "Student Qualification", field: "qualification" },
               ].map(({ label, field }) => (
-                <div key={field} className="relative">
+                <div key={field} className="relative flex gap-2">
                   <strong>{label}:</strong>{" "}
                   {editFields[field] !== undefined ? (
-                    <Input
-                      label={label}
-                      value={editFields[field]}
-                      onChange={(e) => handleFieldChange(e, field)}
-                      className="mt-1"
-                    />
+                    <div className="">
+                      <Input
+                        label={label}
+                        value={editFields[field]}
+                        onChange={(e) => handleFieldChange(e, field)}
+                        className="mt-1"
+                      />
+                    </div>
                   ) : field === "courses" ? (
                     <div>
                       {selectedCourses.length > 0
@@ -354,20 +358,25 @@ export const EnquiryDetailPage = () => {
                   ) : (
                     enquiry[field]
                   )}
-                  <PencilIcon
-                    className="w-5 h-5 inline-block ml-2 cursor-pointer text-gray-500"
-                    onClick={() => handleEditClick(field)}
-                  />
+                  <div className="text-center">
+                    <PencilIcon
+                      className="w-5 h-5 inline-block ml-2 cursor-pointer text-gray-500"
+                      onClick={() => handleEditClick(field)}
+                    />
+                  </div>
                 </div>
               ))}
               <div>
-                <strong>Course:</strong>{" "}
+                <strong>Enquired Courses:</strong>{" "}
                 {enquiry.courses.map((course) => course.courseName).join(", ")}
                 <PencilIcon
                   className="w-5 h-5 inline-block ml-2 cursor-pointer text-gray-500"
                   onClick={() => handleEditClick("courses")}
                 />
               </div>
+              <p>
+                <strong>Sources:</strong> {enquiry.source}
+              </p>
             </div>
             {editFields.courses && (
               <div className="mt-6">
@@ -375,27 +384,11 @@ export const EnquiryDetailPage = () => {
                   label="Courses Registered For"
                   options={courses} // Array of all available courses
                   selectedValues={selectedCourses} // Array of currently selected courses
+                  enquiry={enquiry}
                   onChange={handleCourseChange} // Update state on change
-                  error={courseError} // Display validation errors
                 />
-
-                <button
-                  className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-lg"
-                  onClick={handleSave}
-                >
-                  Save Changes
-                </button>
               </div>
             )}
-            <div>
-              {showUpdateButton && (
-                <div className="mt-6 text-right">
-                  <Button onClick={handleUpdate} variant="filled">
-                    Update
-                  </Button>
-                </div>
-              )}
-            </div>
           </div>
         </div>
 
@@ -490,6 +483,10 @@ export const EnquiryDetailPage = () => {
         <DialogHeader>Send Email</DialogHeader>
         <DialogBody>
           <form onSubmit={handleEmailSubmit}>
+            <div className="mb-4">
+              <p className="text-gray-900 text-lg">Send Email To: </p>
+              <Input label="Send to Email" value={enquiry.email} disabled />
+            </div>
             <div className="mb-4">
               <Input
                 placeholder="Enter Subject"

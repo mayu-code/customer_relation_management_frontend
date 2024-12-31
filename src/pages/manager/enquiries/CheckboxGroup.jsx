@@ -5,7 +5,7 @@ export const CheckboxGroup = ({
   options = [],
   selectedValues,
   onChange,
-  error,
+  enquiry,
 }) => {
   const handleCheckboxChange = (e) => {
     const { value, checked } = e.target;
@@ -13,16 +13,32 @@ export const CheckboxGroup = ({
     // Find the course object from the options array
     const course = options.find((option) => option.courseName === value);
 
-    // Create a new state array
+    // If the course is selected (checked), add it to selectedValues, otherwise remove it
     const updatedValues = checked
-      ? [...selectedValues, course] // Add selected course
-      : selectedValues.filter((item) => item.courseName !== course.courseName); // Remove unselected course
+      ? [
+          ...selectedValues,
+          { ...course, id: course.id || undefined }, // Add course with id if it exists
+        ]
+      : selectedValues.filter((item) => item.courseName !== course.courseName);
+
+    // Ensure courses in enquiry.courses retain their id if they are selected
+    const finalCourses = updatedValues.map((course) => {
+      const existing = enquiry.courses.find(
+        (existingCourse) => existingCourse.courseName === course.courseName
+      );
+      if (existing) {
+        return { ...course, id: existing.id }; // Ensure the course gets its id if it's in enquiry.courses
+      } else {
+        const { id, ...courseWithoutId } = course; // Remove id for new courses
+        return courseWithoutId;
+      }
+    });
 
     // Trigger the onChange handler with the new state
     onChange({
       target: {
         name: "courses",
-        value: updatedValues,
+        value: finalCourses,
       },
     });
   };
@@ -45,7 +61,6 @@ export const CheckboxGroup = ({
       ) : (
         <p>No courses available.</p>
       )}
-      {error && <p className="text-red-500 text-sm">{error}</p>}
     </div>
   );
 };
