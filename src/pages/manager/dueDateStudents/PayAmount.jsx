@@ -1,6 +1,13 @@
 import { useState, useEffect } from "react";
 import { Button, Input, Radio } from "@material-tailwind/react";
-import { Dialog, DialogHeader, DialogBody, DialogFooter } from "@material-tailwind/react";
+import {
+  Dialog,
+  DialogHeader,
+  DialogBody,
+  DialogFooter,
+} from "@material-tailwind/react";
+import { payAmount } from "../../../api/apiData";
+import { useNavigate } from "react-router-dom";
 
 export const PayAmount = ({ isModalOpen, setIsModalOpen, selectedEntry }) => {
   const [paymentForm, setPaymentForm] = useState({
@@ -28,9 +35,23 @@ export const PayAmount = ({ isModalOpen, setIsModalOpen, selectedEntry }) => {
     setPaymentForm({ ...paymentForm, [e.target.name]: e.target.value });
   };
 
+  const payInstallment = async (payReq) => {
+    try {
+      const jwt = localStorage.getItem("jwt");
+      return await payAmount(jwt, payReq);
+    } catch (error) {
+      return console.log(error);
+    }
+  };
+
+  const navigate = useNavigate();
+
   // Handle radio button change for payment type
   const handlePaymentTypeChange = (e) => {
-    setPaymentForm({ ...paymentForm, paymentType: e.target.value.toUpperCase() }); // Convert to uppercase
+    setPaymentForm({
+      ...paymentForm,
+      paymentType: e.target.value.toUpperCase(),
+    }); // Convert to uppercase
   };
 
   // Handle form submission (for payment)
@@ -44,7 +65,16 @@ export const PayAmount = ({ isModalOpen, setIsModalOpen, selectedEntry }) => {
     };
 
     console.log("Payment Form Submitted", paymentData);
+    payInstallment(paymentData);
     setIsModalOpen(false); // Close the modal
+    setPaymentForm({
+      name: "",
+      amountPaid: "",
+      paymentType: "",
+      email: "",
+    });
+    alert("Fees paid successfully");
+    navigate(0);
   };
 
   return (
@@ -87,7 +117,9 @@ export const PayAmount = ({ isModalOpen, setIsModalOpen, selectedEntry }) => {
               onChange={handlePaymentFormChange}
             />
             {paymentFormErrors.amountPaid && (
-              <p className="text-sm text-red-500">{paymentFormErrors.amountPaid}</p>
+              <p className="text-sm text-red-500">
+                {paymentFormErrors.amountPaid}
+              </p>
             )}
           </div>
           <div className="mb-4">
@@ -122,11 +154,13 @@ export const PayAmount = ({ isModalOpen, setIsModalOpen, selectedEntry }) => {
               </div>
             </div>
             {paymentFormErrors.paymentType && (
-              <p className="text-sm text-red-500">{paymentFormErrors.paymentType}</p>
+              <p className="text-sm text-red-500">
+                {paymentFormErrors.paymentType}
+              </p>
             )}
           </div>
 
-          <DialogFooter>
+          <DialogFooter className="flex gap-2">
             <Button type="submit" variant="filled" color="green">
               Pay
             </Button>

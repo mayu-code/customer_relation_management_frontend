@@ -63,17 +63,27 @@ export const DueDateTable = ({ dueForm }) => {
                 <td className="px-4 py-2 border">{entry.name}</td>
                 <td className="px-4 py-2 border">{entry.email}</td>
                 <td className="px-4 py-2 border">₹{entry.totalFees}</td>
-                <td className="px-4 py-2 border">₹{entry.amountPaid}</td>
-                <td className="px-4 py-2 border">₹{entry.totalFees - entry.amountPaid}</td>
+                <td className="px-4 py-2 border text-green-500">
+                  ₹{entry.amountPaid}
+                </td>
+                <td className="px-4 py-2 border text-red-500">
+                  ₹{entry.totalFees - entry.amountPaid}
+                </td>
                 <td className="px-4 py-2 border">{entry.installmentsMonths}</td>
                 <td className="px-4 py-2 border">₹{entry.installments}</td>
                 <td className="px-4 py-2 border">{entry.deuDate}</td>
                 <td className="px-4 py-2 border">
                   <div className="flex justify-center items-center gap-2">
-                    <Button variant="filled" onClick={() => handlePayClick(entry)}>
+                    <Button
+                      variant="filled"
+                      onClick={() => handlePayClick(entry)}
+                    >
                       Pay
                     </Button>
-                    <Button variant="filled" onClick={() => handleInformClick(entry)}>
+                    <Button
+                      variant="filled"
+                      onClick={() => handleInformClick(entry)}
+                    >
                       Inform
                     </Button>
                   </div>
