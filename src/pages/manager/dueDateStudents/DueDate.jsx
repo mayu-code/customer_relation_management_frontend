@@ -37,7 +37,7 @@ export const DueDate = () => {
   // Render data table
   return (
     <div className="w-[calc(100%-4rem)] h-auto mt-10 mx-auto p-10 bg-white shadow-md rounded-md">
-      <h1 className="text-xl font-semibold mb-4">Today's Due Date Registration List : </h1>
+      <h1 className="text-xl font-semibold mb-4">Due Date Registration List : </h1>
       <DueDateTable dueForm={dueForm} />
     </div>
   );

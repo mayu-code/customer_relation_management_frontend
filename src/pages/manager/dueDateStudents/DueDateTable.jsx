@@ -46,7 +46,7 @@ export const DueDateTable = ({ dueForm }) => {
               "Balance Fee",
               "Installment Months",
               "Installment Amount",
-              "Registered Date",
+              "Due Date",
               "Action",
             ].map((header) => (
               <th key={header} className="px-4 py-2 border">
@@ -67,7 +67,7 @@ export const DueDateTable = ({ dueForm }) => {
                 <td className="px-4 py-2 border">₹{entry.totalFees - entry.amountPaid}</td>
                 <td className="px-4 py-2 border">{entry.installmentsMonths}</td>
                 <td className="px-4 py-2 border">₹{entry.installments}</td>
-                <td className="px-4 py-2 border">{entry.registrationDate}</td>
+                <td className="px-4 py-2 border">{entry.deuDate}</td>
                 <td className="px-4 py-2 border">
                   <div className="flex justify-center items-center gap-2">
                     <Button variant="filled" onClick={() => handlePayClick(entry)}>
@@ -87,10 +87,7 @@ export const DueDateTable = ({ dueForm }) => {
                 className="px-4 py-2 text-center border border-gray-300"
               >
                 <div className="p-2 flex flex-col gap-2 justify-center items-center">
-                  <p>No registrations found. Create one.</p>
-                  <Button size="sm" onClick={handleCreateButtonClick}>
-                    Create
-                  </Button>
+                  <p>No due dates yet !</p>
                 </div>
               </td>
             </tr>
