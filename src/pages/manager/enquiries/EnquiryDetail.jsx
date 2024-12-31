@@ -1,7 +1,11 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-import { PencilIcon, XCircleIcon } from "@heroicons/react/24/solid";
+import {
+  PencilIcon,
+  PencilSquareIcon,
+  XCircleIcon,
+} from "@heroicons/react/24/solid";
 import {
   addEnquiryDetail,
   getCources,
@@ -359,7 +363,7 @@ export const EnquiryDetailPage = () => {
                     enquiry[field]
                   )}
                   <div className="text-center">
-                    <PencilIcon
+                    <PencilSquareIcon
                       className="w-5 h-5 inline-block ml-2 cursor-pointer text-gray-500"
                       onClick={() => handleEditClick(field)}
                     />
@@ -369,8 +373,8 @@ export const EnquiryDetailPage = () => {
               <div>
                 <strong>Enquired Courses:</strong>{" "}
                 {enquiry.courses.map((course) => course.courseName).join(", ")}
-                <PencilIcon
-                  className="w-5 h-5 inline-block ml-2 cursor-pointer text-gray-500"
+                <PencilSquareIcon
+                  className="w-5 h-5 inline-block ml-2 cursor-pointer text-gray-600"
                   onClick={() => handleEditClick("courses")}
                 />
               </div>
@@ -513,8 +517,13 @@ export const EnquiryDetailPage = () => {
                 <p className="text-sm text-red-500">{emailFormErrors.body}</p>
               )}
             </div>
-            <DialogFooter>
-              <Button type="submit" variant="filled" color="green">
+            <DialogFooter className="flex gap-2">
+              <Button
+                type="submit"
+                variant="outlined"
+                className="hover:bg-green-50"
+                color="green"
+              >
                 Send Email
               </Button>
               <Button
