@@ -1,30 +1,14 @@
 import { useEffect, useState } from "react";
 import { Button } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
-import { PayAmount } from "./PayAmount";
-import { MailSend } from "./MailSend";
+import { PayAmount } from "./PayAmountAdmin";
+import { MailSend } from "./MailSendAdmin";
 
 export const DueDateTable = ({ dueForm, refetch }) => {
   // State management for modals and selected entry
   const [isModalOpenPay, setIsModalOpenPay] = useState(false);
   const [isModalOpenMail, setIsModalOpenMail] = useState(false);
   const [selectedEntry, setSelectedEntry] = useState(null);
-
-  const navigate = useNavigate();
-
-  // Handlers
-  const handleRowClick = (id) => {
-    navigate(`/manager/registration/${id}`); // Navigate to registration details
-  };
-
-  const handleCreateButtonClick = () => {
-    navigate("/manager/registration-form"); // Navigate to form page
-  };
-
-  const handlePayClick = (entry) => {
-    setSelectedEntry(entry); // Set selected entry for the Pay modal
-    setIsModalOpenPay(true); // Open Pay modal
-  };
 
   const handleInformClick = (entry) => {
     setSelectedEntry(entry); // Set selected entry for the Inform modal
@@ -74,12 +58,6 @@ export const DueDateTable = ({ dueForm, refetch }) => {
                 <td className="px-4 py-2 border">{entry.deuDate}</td>
                 <td className="px-4 py-2 border">
                   <div className="flex justify-center items-center gap-2">
-                    <Button
-                      variant="filled"
-                      onClick={() => handlePayClick(entry)}
-                    >
-                      Pay
-                    </Button>
                     <Button
                       variant="filled"
                       onClick={() => handleInformClick(entry)}

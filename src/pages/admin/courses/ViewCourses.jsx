@@ -105,12 +105,14 @@ const ViewCourses = () => {
   const jwt = localStorage.getItem("jwt");
 
   const deleteCourseHandler = async () => {
+    // alert(confirm("Are you sure want to delete this course?"));
     try {
-      await deleteGetCourse(jwt, selectedCourse.id);
+      const res = await deleteGetCourse(jwt, selectedCourse.id);
       setCourseDeleted(true); // Set flag to trigger the re-fetch in useEffect
+      alert(res?.data?.message);
       handleCloseDeleteDialog();
     } catch (error) {
-      console.error("Error deleting course:", error);
+      alert(error?.message);
     }
   };
 
@@ -118,12 +120,13 @@ const ViewCourses = () => {
     if (!validate()) return;
 
     try {
-      await addCourse(newCourse);
+      const res = await addCourse(newCourse);
       setNewCourse({ courseName: "", courseDuration: "", price: "" });
+      alert(res?.data?.message);
       handleClose();
       setCourseAdded(true); // Set flag to trigger the re-fetch in the useEffect
     } catch (error) {
-      console.error("Error adding course:", error);
+      alert(error?.message);
     }
   };
 
@@ -207,6 +210,7 @@ const ViewCourses = () => {
             <div className="mt-6">
               <Input
                 label="Price"
+                type="number"
                 value={newCourse.price}
                 onChange={(e) =>
                   setNewCourse({ ...newCourse, price: e.target.value })
@@ -238,7 +242,7 @@ const ViewCourses = () => {
           <Typography variant="h6" className="text-center mb-4">
             Are you sure you want to delete this course?
           </Typography>
-          <DialogFooter className="flex gap-2">
+          <DialogFooter className="flex justify-center items-center gap-2">
             <Button
               variant="outlined"
               color="red"

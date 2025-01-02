@@ -209,13 +209,13 @@ export const Header = () => {
     <Navbar className="mx-auto z-50 max-w-full top-2 sticky px-4 py-4">
       <div className="flex items-center justify-between text-blue-gray-900">
         <NavLink to="/" className="mr-4 cursor-pointer py-1.5 lg:ml-2">
-          <Typography variant="h6" className="text-md sm:text-xl">
-            Customer Relation Management
+          <Typography variant="h6" className="uppercase text-md sm:text-xl">
+            Gradient Infotech
           </Typography>
         </NavLink>
-        <div className="hidden lg:block">
+        {/* <div className="hidden lg:block">
           <NavList />
-        </div>
+        </div> */}
 
         {/* Right Section - Conditional Rendering for Profile Avatar */}
         <div className="hidden flex justify-center items-center gap-2 lg:flex">

@@ -328,60 +328,163 @@ export const EnquiryDetailPage = () => {
           </div>
           <div className="flex flex-col p-4">
             <div className="grid grid-cols-2 gap-14 text-xl mt-10">
-              <p>
-                <strong>Enquiry ID:</strong> {enquiry.id}
+              <p className="text-blue-600">
+                <strong className="text-black">Enquiry ID:</strong> {enquiry.id}
               </p>
               <p>
                 <strong>Enquiry Date:</strong> {enquiry.enquiryDate}
               </p>
-              {[
-                { label: "Student Name", field: "name" },
-                { label: "Student Email", field: "email" },
-                { label: "Student Contact", field: "contact" },
-                { label: "Student Branch", field: "branch" },
-                { label: "Student College", field: "college" },
-                { label: "Student Qualification", field: "qualification" },
-              ].map(({ label, field }) => (
-                <div key={field} className="relative flex gap-2">
-                  <strong>{label}:</strong>{" "}
-                  {editFields[field] !== undefined ? (
-                    <div className="">
-                      <Input
-                        label={label}
-                        value={editFields[field]}
-                        onChange={(e) => handleFieldChange(e, field)}
-                        className="mt-1"
-                      />
-                    </div>
-                  ) : field === "courses" ? (
-                    <div>
-                      {selectedCourses.length > 0
-                        ? selectedCourses.join(", ")
-                        : "No courses selected"}
-                    </div>
-                  ) : (
-                    enquiry[field]
-                  )}
-                  <div className="text-center">
-                    <PencilSquareIcon
-                      className="w-5 h-5 inline-block ml-2 cursor-pointer text-gray-500"
-                      onClick={() => handleEditClick(field)}
+
+              <div className="relative flex gap-2">
+                <strong>Student Name:</strong>
+                {editFields.name !== undefined ? (
+                  <div className="">
+                    <Input
+                      label="Student Name"
+                      value={editFields.name}
+                      onChange={(e) => handleFieldChange(e, "name")}
+                      className="mt-1"
                     />
                   </div>
+                ) : (
+                  enquiry.name
+                )}
+                <div className="text-center">
+                  <PencilSquareIcon
+                    className="w-5 h-5 inline-block ml-2 cursor-pointer text-gray-500"
+                    onClick={() => handleEditClick("name")}
+                  />
                 </div>
-              ))}
+              </div>
+
+              <div className="relative flex gap-2">
+                <strong>Student Email:</strong>
+                {editFields.email !== undefined ? (
+                  <div className="">
+                    <Input
+                      label="Student Email"
+                      value={editFields.email}
+                      onChange={(e) => handleFieldChange(e, "email")}
+                      className="mt-1"
+                    />
+                  </div>
+                ) : (
+                  enquiry.email
+                )}
+                <div className="text-center">
+                  <PencilSquareIcon
+                    className="w-5 h-5 inline-block ml-2 cursor-pointer text-gray-500"
+                    onClick={() => handleEditClick("email")}
+                  />
+                </div>
+              </div>
+
+              <div className="relative flex gap-2">
+                <strong>Student Contact:</strong>
+                {editFields.contact !== undefined ? (
+                  <div className="">
+                    <Input
+                      label="Student Contact"
+                      value={editFields.contact}
+                      onChange={(e) => handleFieldChange(e, "contact")}
+                      className="mt-1"
+                    />
+                  </div>
+                ) : (
+                  enquiry.contact
+                )}
+                <div className="text-center">
+                  <PencilSquareIcon
+                    className="w-5 h-5 inline-block ml-2 cursor-pointer text-gray-500"
+                    onClick={() => handleEditClick("contact")}
+                  />
+                </div>
+              </div>
+
+              <div className="relative flex gap-2">
+                <strong>Student Branch:</strong>
+                {editFields.branch !== undefined ? (
+                  <div className="">
+                    <Input
+                      label="Student Branch"
+                      value={editFields.branch}
+                      onChange={(e) => handleFieldChange(e, "branch")}
+                      className="mt-1"
+                    />
+                  </div>
+                ) : (
+                  enquiry.branch
+                )}
+                <div className="text-center">
+                  <PencilSquareIcon
+                    className="w-5 h-5 inline-block ml-2 cursor-pointer text-gray-500"
+                    onClick={() => handleEditClick("branch")}
+                  />
+                </div>
+              </div>
+
+              <div className="relative flex gap-2">
+                <strong>Student College:</strong>
+                {editFields.college !== undefined ? (
+                  <div className="">
+                    <Input
+                      label="Student College"
+                      value={editFields.college}
+                      onChange={(e) => handleFieldChange(e, "college")}
+                      className="mt-1"
+                    />
+                  </div>
+                ) : (
+                  enquiry.college
+                )}
+                <div className="text-center">
+                  <PencilSquareIcon
+                    className="w-5 h-5 inline-block ml-2 cursor-pointer text-gray-500"
+                    onClick={() => handleEditClick("college")}
+                  />
+                </div>
+              </div>
+
+              <div className="relative flex gap-2">
+                <strong>Student Qualification:</strong>
+                {editFields.qualification !== undefined ? (
+                  <div className="">
+                    <Input
+                      label="Student Qualification"
+                      value={editFields.qualification}
+                      onChange={(e) => handleFieldChange(e, "qualification")}
+                      className="mt-1"
+                    />
+                  </div>
+                ) : (
+                  enquiry.qualification
+                )}
+                <div className="text-center">
+                  <PencilSquareIcon
+                    className="w-5 h-5 inline-block ml-2 cursor-pointer text-gray-500"
+                    onClick={() => handleEditClick("qualification")}
+                  />
+                </div>
+              </div>
+
               <div>
                 <strong>Enquired Courses:</strong>{" "}
-                {enquiry.courses.map((course) => course.courseName).join(", ")}
+                {enquiry.courses.length > 0
+                  ? enquiry.courses
+                      .map((course) => course.courseName)
+                      .join(", ")
+                  : "No courses selected"}
                 <PencilSquareIcon
                   className="w-5 h-5 inline-block ml-2 cursor-pointer text-gray-600"
                   onClick={() => handleEditClick("courses")}
                 />
               </div>
+
               <p>
                 <strong>Sources:</strong> {enquiry.source}
               </p>
             </div>
+
             {editFields.courses && (
               <div className="mt-6">
                 <CheckboxGroup
@@ -521,14 +624,15 @@ export const EnquiryDetailPage = () => {
               <Button
                 type="submit"
                 variant="outlined"
-                className="hover:bg-green-50"
+                className="hover:bg-green-100"
                 color="green"
               >
                 Send Email
               </Button>
               <Button
-                variant="filled"
                 color="red"
+                variant="outlined"
+                className="hover:bg-red-100"
                 onClick={() => setIsModalOpen(false)}
               >
                 Close

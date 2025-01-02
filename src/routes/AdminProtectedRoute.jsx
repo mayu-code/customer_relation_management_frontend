@@ -63,9 +63,11 @@ export const AdminProtectedRoute = () => {
   // Handle role-based routing
   if (user1.role === "ADMIN") {
     return (
-      <section className="flex gap-5">
+      <section className="flex gap-2">
         <Sidebar user={user1} />
-        <Outlet />
+        <div className="w-full min-h-lvh">
+          <Outlet />
+        </div>
       </section>
     );
   }

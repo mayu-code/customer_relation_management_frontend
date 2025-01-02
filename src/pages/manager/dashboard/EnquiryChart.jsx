@@ -1,34 +1,31 @@
 // src/components/EnquiryChart.js
 import React from "react";
-import { Paper, Typography } from "@mui/material";
 import {
   LineChart,
   Line,
-  CartesianGrid,
   XAxis,
   YAxis,
   Tooltip,
-  Legend,
+  CartesianGrid,
   ResponsiveContainer,
 } from "recharts";
 
 const EnquiryChart = ({ data }) => {
   return (
-    <Paper className="p-6 bg-white shadow-lg rounded-xl">
-      <Typography variant="h6" className="font-medium mb-4 text-gray-800">
-        Enquiries Over Time
-      </Typography>
-      <ResponsiveContainer width="100%" height={250}>
+    <div className="bg-white p-4 shadow-md rounded-xl">
+      <h3 className="text-lg font-semibold mb-4 text-gray-700">
+        Monthly Enquiries
+      </h3>
+      <ResponsiveContainer width="100%" height={300}>
         <LineChart data={data}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
+          <XAxis dataKey="month" />
           <YAxis />
           <Tooltip />
-          <Legend />
-          <Line type="monotone" dataKey="enquiries" stroke="#82ca9d" />
+          <Line type="monotone" dataKey="count" stroke="#10B981" />
         </LineChart>
       </ResponsiveContainer>
-    </Paper>
+    </div>
   );
 };
 

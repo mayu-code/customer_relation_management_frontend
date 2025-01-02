@@ -35,7 +35,7 @@ export const Enquiries = () => {
   // Fetch all enquiries
   const fetchAllEnquiries = async () => {
     try {
-      const res = await getEnquiries(jwt);
+      const res = await getEnquiries(jwt, "manager");
       return res?.data?.data || [];
     } catch (error) {
       console.error("Error fetching enquiries:", error);
@@ -172,7 +172,7 @@ export const Enquiries = () => {
   };
 
   return (
-    <div className="w-full max-w-[95%] mx-auto mt-10 p-6 bg-white shadow-md rounded-md">
+    <div className="w-full  mt-5 p-6 bg-white shadow-md rounded-md">
       <h1 className="text-2xl font-semibold mb-6 text-center sm:text-left">
         Enquiries
       </h1>

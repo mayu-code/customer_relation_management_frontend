@@ -39,7 +39,7 @@ const profileMenuItems = (role) => [
   {
     label: "Help",
     icon: LifebuoyIcon,
-    link: "/help",
+    link: "#",
   },
   {
     label: "Sign Out",
@@ -59,10 +59,14 @@ export function ProfileAvatar({ user }) {
   const closeMenu = () => setIsMenuOpen(false);
 
   const handleLogout = () => {
-    localStorage.clear();
-    dispatch(deleteUser());
-    closeMenu();
-    navigate("/");
+    const confirmLogout = window.confirm("Are you sure you want to sign out?");
+
+    if (confirmLogout) {
+      localStorage.clear();
+      dispatch(deleteUser());
+      closeMenu();
+      navigate("/");
+    }
     // Your logout logic here
   };
 

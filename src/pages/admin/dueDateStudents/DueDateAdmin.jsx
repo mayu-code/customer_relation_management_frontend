@@ -1,8 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { getDueRegistration } from "../../../api/apiData";
-import { DueDateTable } from "./DueDateTable";
+import { DueDateTable } from "./DueDateTableAdmin";
 
-export const DueDate = () => {
+export const DueDateAdmin = () => {
   // Fetch data using react-query
   const {
     data: dueForm = [],
@@ -13,7 +13,7 @@ export const DueDate = () => {
     queryKey: ["dueForm"],
     queryFn: async () => {
       const jwt = localStorage.getItem("jwt");
-      const res = await getDueRegistration(jwt, "manager");
+      const res = await getDueRegistration(jwt, "admin");
       return res?.data?.data || [];
     },
   });

@@ -1,18 +1,15 @@
-import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { getRegistrationById, payAmount } from "../../../api/apiData";
+import { useState } from "react";
+import { useParams } from "react-router-dom";
+import { getRegistrationById } from "../../../api/apiData";
 import { useQuery } from "@tanstack/react-query";
-import { Input, Button, Radio } from "@material-tailwind/react";
-import { MailSend } from "../dueDateStudents/MailSend";
+import { Input, Button } from "@material-tailwind/react";
 import { PencilSquareIcon } from "@heroicons/react/24/solid";
 import ImageDisplay from "../../../components/ui/ImageDisplay";
-import jsPDF from "jspdf";
 
-export const RegistrationDetail = () => {
+export const AdminRegistrationDetail = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
   const jwt = localStorage.getItem("jwt");
-  const [isModalOpenMail, setIsModalOpenMail] = useState(false);
+  //   const [isModalOpenMail, setIsModalOpenMail] = useState(false);
   const [editFields, setEditFields] = useState({});
   const [showUpdateButton, setShowUpdateButton] = useState(false);
   const [showDeleteButton, setShowDeleteButton] = useState(false);
@@ -40,90 +37,90 @@ export const RegistrationDetail = () => {
     },
   });
 
-  const [paymentForm, setPaymentForm] = useState({
-    name: "",
-    amountPaid: "",
-    paymentType: "",
-    email: "",
-  });
-  const [paymentFormErrors, setPaymentFormErrors] = useState({});
-  const [paymentError, setPaymentError] = useState(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  //   const [paymentForm, setPaymentForm] = useState({
+  //     name: "",
+  //     amountPaid: "",
+  //     paymentType: "",
+  //     email: "",
+  //   });
+  //   const [paymentFormErrors, setPaymentFormErrors] = useState({});
+  //   const [paymentError, setPaymentError] = useState(null);
+  //   const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState({});
 
-  useEffect(() => {
-    if (registration) {
-      setPaymentForm({
-        name: registration.name || "",
-        amountPaid: "",
-        paymentType: "",
-        email: registration.email || "",
-      });
-    }
-  }, [registration]);
+  //   useEffect(() => {
+  //     if (registration) {
+  //       setPaymentForm({
+  //         name: registration.name || "",
+  //         amountPaid: "",
+  //         paymentType: "",
+  //         email: registration.email || "",
+  //       });
+  //     }
+  //   }, [registration]);
 
-  const handlePaymentFormChange = (e) => {
-    setPaymentForm({ ...paymentForm, [e.target.name]: e.target.value });
-  };
+  //   const handlePaymentFormChange = (e) => {
+  //     setPaymentForm({ ...paymentForm, [e.target.name]: e.target.value });
+  //   };
 
-  const handlePaymentTypeChange = (e) => {
-    setPaymentForm({
-      ...paymentForm,
-      paymentType: e.target.value.toUpperCase(),
-    });
-  };
+  //   const handlePaymentTypeChange = (e) => {
+  //     setPaymentForm({
+  //       ...paymentForm,
+  //       paymentType: e.target.value.toUpperCase(),
+  //     });
+  //   };
 
-  const validatePaymentForm = () => {
-    const errors = {};
-    if (!paymentForm.amountPaid || isNaN(paymentForm.amountPaid)) {
-      errors.amountPaid = "Please enter a valid amount.";
-    }
-    if (!paymentForm.paymentType) {
-      errors.paymentType = "Please select a payment type.";
-    }
-    setPaymentFormErrors(errors);
-    return Object.keys(errors).length === 0;
-  };
+  //   const validatePaymentForm = () => {
+  //     const errors = {};
+  //     if (!paymentForm.amountPaid || isNaN(paymentForm.amountPaid)) {
+  //       errors.amountPaid = "Please enter a valid amount.";
+  //     }
+  //     if (!paymentForm.paymentType) {
+  //       errors.paymentType = "Please select a payment type.";
+  //     }
+  //     setPaymentFormErrors(errors);
+  //     return Object.keys(errors).length === 0;
+  //   };
 
-  const payInstallment = async (payReq) => {
-    try {
-      setIsSubmitting(true);
-      const response = await payAmount(jwt, payReq, "manager");
-      setIsSubmitting(false);
-      return response;
-    } catch (error) {
-      setIsSubmitting(false);
-      setPaymentError("Failed to process payment. Please try again.");
-      console.error(error);
-    }
-  };
+  //   const payInstallment = async (payReq) => {
+  //     try {
+  //       setIsSubmitting(true);
+  //       const response = await payAmount(jwt, payReq, "manager");
+  //       setIsSubmitting(false);
+  //       return response;
+  //     } catch (error) {
+  //       setIsSubmitting(false);
+  //       setPaymentError("Failed to process payment. Please try again.");
+  //       console.error(error);
+  //     }
+  //   };
 
-  const handlePaymentSubmit = async (e) => {
-    e.preventDefault();
-    if (!validatePaymentForm()) return;
+  //   const handlePaymentSubmit = async (e) => {
+  //     e.preventDefault();
+  //     if (!validatePaymentForm()) return;
 
-    const paymentData = {
-      ...paymentForm,
-      paymentType: paymentForm.paymentType.toUpperCase(),
-    };
+  //     const paymentData = {
+  //       ...paymentForm,
+  //       paymentType: paymentForm.paymentType.toUpperCase(),
+  //     };
 
-    try {
-      const response = await payInstallment(paymentData);
-      if (response) {
-        alert(response?.data?.message);
-        setPaymentForm({
-          name: registration.name,
-          amountPaid: "",
-          paymentType: "",
-          email: registration.email,
-        });
-        // Refetch the registration details
-        refetch();
-      }
-    } catch (error) {
-      console.error(error?.message);
-    }
-  };
+  //     try {
+  //       const response = await payInstallment(paymentData);
+  //       if (response) {
+  //         alert(response?.data?.message);
+  //         setPaymentForm({
+  //           name: registration.name,
+  //           amountPaid: "",
+  //           paymentType: "",
+  //           email: registration.email,
+  //         });
+  //         // Refetch the registration details
+  //         refetch();
+  //       }
+  //     } catch (error) {
+  //       console.error(error?.message);
+  //     }
+  //   };
 
   if (isLoading) {
     return <div>Loading registration details...</div>;
@@ -141,18 +138,12 @@ export const RegistrationDetail = () => {
   // console.log(editFields);
 
   const handleUpdate = async () => {
-    const editableFields = [
-      "name",
-      "email",
-      "contact",
-      "branch",
-      "college",
-      "qualification",
-    ]; // Editable fields excluding courses
+    const editableFields = ["amountPaid"]; // Editable fields excluding courses
 
-    // let newErrors = {};
+    let newErrors = {};
 
-    // if (!editFields.name) newErrors.name = "Name is required";
+    if (!editFields.amountPaid && editFields.amountPaid === 0)
+      newErrors.amountPaid = "Amount Paid is required";
     // if (!editFields.email) newErrors.email = "email is required";
     // if (!editFields.college) newErrors.college = "college is required";
     // if (!editFields.contact) newErrors.contact = "contact is required";
@@ -214,18 +205,8 @@ export const RegistrationDetail = () => {
   const validateField = (name, value) => {
     let newErrors = { ...errors };
 
-    if (name === "name" && !value) {
-      newErrors.name = "Name is Required.";
-    } else if (name === "email" && !value) {
-      newErrors.email = "Email is Required.";
-    } else if (name === "contact" && !value) {
-      newErrors.contact = "Contact is Required.";
-    } else if (name === "college" && !value) {
-      newErrors.college = "College is Required.";
-    } else if (name === "branch" && !value) {
-      newErrors.branch = "Branch is Required.";
-    } else if (name === "qualification" && !value) {
-      newErrors.qualification = "Qualification is Required.";
+    if (name === "amountPaid" && parseInt(value) === 0) {
+      newErrors.amountPaid = "Amount Paid must be greater than 0";
     } else {
       delete newErrors[name];
     }
@@ -237,47 +218,47 @@ export const RegistrationDetail = () => {
 
   // console.log(registration.receipts[0]);
 
-  const handleDownloadReceipt = (receipt) => {
-    const doc = new jsPDF();
+  //   const handleDownloadReceipt = (receipt) => {
+  //     const doc = new jsPDF();
 
-    // Set up a nice header with company name
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(24);
-    doc.setTextColor(0, 123, 255); // Blue color for the company name
-    doc.text("Gradient Infotech", 20, 30);
+  //     // Set up a nice header with company name
+  //     doc.setFont("helvetica", "bold");
+  //     doc.setFontSize(24);
+  //     doc.setTextColor(0, 123, 255); // Blue color for the company name
+  //     doc.text("Gradient Infotech", 20, 30);
 
-    // Set font for receipt labels (bold)
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(12);
-    doc.setTextColor(0, 0, 0); // Black color for the labels
+  //     // Set font for receipt labels (bold)
+  //     doc.setFont("helvetica", "bold");
+  //     doc.setFontSize(12);
+  //     doc.setTextColor(0, 0, 0); // Black color for the labels
 
-    // Receipt labels
-    doc.text("Receipt ID:", 20, 50);
-    doc.text("Date:", 20, 60);
-    doc.text("Payment Type:", 20, 70);
-    doc.text("Received Amount:", 20, 80);
-    doc.text("Sender:", 20, 90);
-    doc.text("Towards:", 20, 100);
+  //     // Receipt labels
+  //     doc.text("Receipt ID:", 20, 50);
+  //     doc.text("Date:", 20, 60);
+  //     doc.text("Payment Type:", 20, 70);
+  //     doc.text("Received Amount:", 20, 80);
+  //     doc.text("Sender:", 20, 90);
+  //     doc.text("Towards:", 20, 100);
 
-    // Set font for receipt values (normal)
-    doc.setFont("helvetica", "normal");
+  //     // Set font for receipt values (normal)
+  //     doc.setFont("helvetica", "normal");
 
-    // Receipt details
-    doc.text(`${receipt.id}`, 80, 50);
-    doc.text(`${receipt.date}`, 80, 60);
-    doc.text(`${receipt.paymentType}`, 80, 70);
-    doc.text(`Rs. ${receipt.recievedAmount}`, 80, 80);
-    doc.text(`${receipt.sender}`, 80, 90);
-    doc.text(`${receipt.towards}`, 80, 100);
+  //     // Receipt details
+  //     doc.text(`${receipt.id}`, 80, 50);
+  //     doc.text(`${receipt.date}`, 80, 60);
+  //     doc.text(`${receipt.paymentType}`, 80, 70);
+  //     doc.text(`Rs. ${receipt.recievedAmount}`, 80, 80);
+  //     doc.text(`${receipt.sender}`, 80, 90);
+  //     doc.text(`${receipt.towards}`, 80, 100);
 
-    // Add a footer or additional info
-    doc.setFontSize(10);
-    doc.text("Thank you for choosing Gradient Infotech!", 20, 120);
-    doc.text("For any queries, please contact us.", 20, 130);
+  //     // Add a footer or additional info
+  //     doc.setFontSize(10);
+  //     doc.text("Thank you for choosing Gradient Infotech!", 20, 120);
+  //     doc.text("For any queries, please contact us.", 20, 130);
 
-    // Save the PDF
-    doc.save(`receipt_${receipt.id}.pdf`);
-  };
+  //     // Save the PDF
+  //     doc.save(`receipt_${receipt.id}.pdf`);
+  //   };
 
   return (
     <div className="p-6 mt-6 bg-white shadow-md rounded-sm">
@@ -294,14 +275,14 @@ export const RegistrationDetail = () => {
               {showDeleteButton && (
                 <Button onClick={handleCancelClick}>Cancel</Button>
               )}
-              <Button onClick={() => setIsModalOpenMail(true)}>
+              {/* <Button onClick={() => setIsModalOpenMail(true)}>
                 Send Email
-              </Button>
-              <MailSend
+              </Button> */}
+              {/* <MailSend
                 isModalOpen={isModalOpenMail}
                 setIsModalOpen={setIsModalOpenMail}
                 selectedEntry={registration}
-              />
+              /> */}
             </div>
           </div>
           {/* Registration Details */}
@@ -319,144 +300,37 @@ export const RegistrationDetail = () => {
               <h3 className="font-bold">Name</h3>
               <div className="flex gap-1">
                 <p>{registration.name}</p>
-                <PencilSquareIcon
-                  onClick={() => handleEditClick("name")}
-                  className="w-5 h-5 inline-block ml-2 cursor-pointer text-gray-500"
-                />
               </div>
-              {editFields.name !== undefined && (
-                <div className="mt-2">
-                  <Input
-                    label="Student Name"
-                    value={editFields.name}
-                    onChange={(e) => handleFieldChange(e, "name")}
-                    className="mt-1"
-                    error={errors.name}
-                  />
-                  {errors.name && (
-                    <p className="text-red-500 text-sm">{errors.name}</p>
-                  )}
-                </div>
-              )}
             </div>
             <div className="p-4">
               <h3 className="font-bold">Email</h3>
               <div className="flex gap-1">
                 <p>{registration.email}</p>
-                <PencilSquareIcon
-                  onClick={() => handleEditClick("email")}
-                  className="w-5 h-5 inline-block ml-2 cursor-pointer text-gray-500"
-                />
               </div>
-              {editFields.email !== undefined && (
-                <div className="mt-2">
-                  <Input
-                    type="email"
-                    label="Student Email"
-                    value={editFields.email}
-                    onChange={(e) => handleFieldChange(e, "email")}
-                    className="mt-1"
-                  />
-                  {errors.email && (
-                    <p className="text-red-500 text-sm">{errors.email}</p>
-                  )}
-                </div>
-              )}
             </div>
             <div className="p-4">
               <h3 className="font-bold">Contact</h3>
               <div className="flex gap-1">
                 <p>{registration.contact}</p>
-                <PencilSquareIcon
-                  onClick={() => handleEditClick("contact")}
-                  className="w-5 h-5 inline-block ml-2 cursor-pointer text-gray-500"
-                />
               </div>
-              {editFields.contact !== undefined && (
-                <div className="mt-2">
-                  <Input
-                    type="number"
-                    label="Student Contact"
-                    value={editFields.contact}
-                    onChange={(e) => handleFieldChange(e, "contact")}
-                    className="mt-1"
-                  />
-                  {errors.contact && (
-                    <p className="text-red-500 text-sm">{errors.contact}</p>
-                  )}
-                </div>
-              )}
             </div>
             <div className="p-4">
               <h3 className="font-bold">College</h3>
               <div className="flex gap-1">
                 <p>{registration.college}</p>
-                <PencilSquareIcon
-                  onClick={() => handleEditClick("college")}
-                  className="w-5 h-5 inline-block ml-2 cursor-pointer text-gray-500"
-                />
               </div>
-              {editFields.college !== undefined && (
-                <div className="mt-2">
-                  <Input
-                    label="Student College"
-                    value={editFields.college}
-                    onChange={(e) => handleFieldChange(e, "college")}
-                    className="mt-1"
-                  />
-                  {errors.college && (
-                    <p className="text-red-500 text-sm">{errors.college}</p>
-                  )}
-                </div>
-              )}
             </div>
             <div className="p-4">
               <h3 className="font-bold">Branch</h3>
               <div className="flex gap-1">
                 <p>{registration.branch}</p>
-                <PencilSquareIcon
-                  onClick={() => handleEditClick("branch")}
-                  className="w-5 h-5 inline-block ml-2 cursor-pointer text-gray-500"
-                />
               </div>
-              {editFields.branch !== undefined && (
-                <div className="mt-2">
-                  <Input
-                    label="Student branch"
-                    value={editFields.branch}
-                    onChange={(e) => handleFieldChange(e, "branch")}
-                    className="mt-1"
-                  />
-                  {errors.branch && (
-                    <p className="text-red-500 text-sm">{errors.branch}</p>
-                  )}
-                </div>
-              )}
             </div>
             <div className="p-4">
               <h3 className="font-bold">Qualification</h3>
               <div className="flex gap-1">
                 <p>{registration.qualification}</p>
-                <PencilSquareIcon
-                  onClick={() => handleEditClick("qualification")}
-                  className="w-5 h-5 inline-block ml-2 cursor-pointer text-gray-500"
-                />
               </div>
-              {editFields.qualification !== undefined && (
-                <div className="mt-2">
-                  <Input
-                    label="Student Qualification"
-                    value={editFields.qualification}
-                    onChange={(e) => handleFieldChange(e, "qualification")}
-                    className="mt-1"
-                  />
-                  {errors.qualification && (
-                    <p className="text-red-500 text-sm">
-                      {errors.qualification}
-                    </p>
-                  )}
-                </div>
-              )}
             </div>
             <div className="p-4">
               <h3 className="font-bold">Payment Type</h3>
@@ -493,6 +367,34 @@ export const RegistrationDetail = () => {
                 </p>
               </div>
             )}
+            <div className="p-4">
+              <h3 className="font-bold">Amount Paid</h3>
+              <p>
+                ₹{" "}
+                <strong className="text-green-500">
+                  {registration.amountPaid}
+                </strong>
+                <PencilSquareIcon
+                  onClick={() => handleEditClick("amountPaid")}
+                  className="w-5 h-5 inline-block ml-2 cursor-pointer text-gray-500"
+                />
+              </p>
+              {editFields.amountPaid !== undefined && (
+                <div className="mt-2">
+                  <Input
+                    label="Amount paid"
+                    type="number"
+                    name="amountPaid"
+                    value={editFields.amountPaid}
+                    onChange={(e) => handleFieldChange(e, "amountPaid")}
+                    className="mt-1"
+                  />
+                  {errors.amountPaid && (
+                    <p className="text-red-500 text-sm">{errors.amountPaid}</p>
+                  )}
+                </div>
+              )}
+            </div>
             {registration.installmentsMonths !== 0 && (
               <div className="p-4">
                 <h3 className="font-bold">Installment Months</h3>
@@ -534,7 +436,7 @@ export const RegistrationDetail = () => {
 
         <div className="flex flex-col w-1/4">
           {/* Payment Form */}
-          <div>
+          {/* <div>
             {registration.installmentsMonths > 0 && (
               <div className="flex flex-col border p-2 shadow-sm rounded-md text-xs">
                 <div className="text-center mb-4">
@@ -615,8 +517,8 @@ export const RegistrationDetail = () => {
                 </form>
               </div>
             )}
-          </div>
-          <div className="mt-5 text-xs shadow-sm rounded-md border p-3">
+          </div> */}
+          {/* <div className="mt-5 text-xs shadow-sm rounded-md border p-3">
             <h3 className="text-xl font-semibold mb-4">
               Existing Payment Details
             </h3>
@@ -669,7 +571,7 @@ export const RegistrationDetail = () => {
                 No payment details found for this registration..
               </p>
             )}
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

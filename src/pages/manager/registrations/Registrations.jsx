@@ -67,18 +67,15 @@ export const Registrations = () => {
     queryKey: ["registrations"],
     queryFn: async () => {
       const jwt = localStorage.getItem("jwt");
-      const res = await getRegistrations(jwt);
+      const res = await getRegistrations(jwt, "manager");
       return res?.data?.data || [];
     },
   });
 
-  // console.log(data);
-
   useEffect(() => {
     if (data) {
-      // Set registrations without reversing
       setRegistrations(data);
-      setFilteredRegistrations(data); // Set filteredRegistrations to the full list initially
+      setFilteredRegistrations(data);
     }
   }, [data]);
 
@@ -91,7 +88,7 @@ export const Registrations = () => {
       } catch (error) {
         console.error("Error searching by name:", error);
       }
-    }, 300), // 300ms debounce delay
+    }, 300),
     []
   );
 
@@ -104,7 +101,7 @@ export const Registrations = () => {
       } catch (error) {
         console.error("Error searching by ID:", error);
       }
-    }, 300), // 300ms debounce delay
+    }, 300),
     []
   );
 
@@ -152,7 +149,6 @@ export const Registrations = () => {
         );
       }
 
-      // Filter by course
       if (filters.course) {
         filtered = filtered.filter((enquiry) =>
           enquiry.registeredCourses.some((course) =>
@@ -183,20 +179,22 @@ export const Registrations = () => {
   }
 
   return (
-    <div className="w-[calc(100%-4rem)] h-auto mt-10 mx-auto p-10 bg-white shadow-md rounded-md">
-      <h1 className="text-xl font-semibold mb-4">Registrations</h1>
-      <RegistrationFilters
-        searchQuery={searchQuery}
-        idSearchQuery={idSearchQuery}
-        filters={filters}
-        setSearchQuery={setSearchQuery}
-        setIdSearchQuery={setIdSearchQuery}
-        setFilters={setFilters}
-        colleges={collegesData}
-        branches={branchesData}
-        qualifications={qualificationsData}
-        courses={courseData}
-      />
+    <div className="w-full p-8 mt-5 bg-white shadow-md rounded-md">
+      <h1 className="text-xl sm:text-2xl font-semibold mb-4">Registrations</h1>
+      <div className="w-4/5">
+        <RegistrationFilters
+          searchQuery={searchQuery}
+          idSearchQuery={idSearchQuery}
+          filters={filters}
+          setSearchQuery={setSearchQuery}
+          setIdSearchQuery={setIdSearchQuery}
+          setFilters={setFilters}
+          colleges={collegesData}
+          branches={branchesData}
+          qualifications={qualificationsData}
+          courses={courseData}
+        />
+      </div>
       <RegistrationTable registrations={filteredRegistrations} />
     </div>
   );

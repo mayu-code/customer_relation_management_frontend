@@ -15,33 +15,17 @@ export const Home = () => {
           variant="h1"
           className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-gray-900 mb-6"
         >
-          Transform Your Customer Experience
+          Build Your Career with{" "}
+          <p className="text-yellow-400 mt-6">Gradient Infotech</p>
         </Typography>
         <Typography
           variant="lead"
           className="text-lg sm:text-xl md:text-2xl text-gray-700 opacity-90 mb-8"
         >
-          Boost your business with intuitive tools, real-time analytics, and
-          seamless integrations for managing customer relationships effectively.
+          Transform your future with our industry-focused training and
+          internship programs designed to enhance your skills and help you land
+          your dream job.
         </Typography>
-
-        {/* Call-to-Action Buttons */}
-        <div className="flex flex-col sm:flex-row justify-center gap-6 mb-12">
-          <Button
-            size="lg"
-            className="bg-gradient-to-r from-teal-400 to-blue-400 text-white hover:scale-105 transition-transform w-full sm:w-auto"
-            ripple={true}
-          >
-            Get Started Free
-          </Button>
-          <Button
-            size="lg"
-            variant="outlined"
-            className="border-gray-700 text-gray-700 hover:border-teal-400 hover:text-teal-400 transition-colors w-full sm:w-auto"
-          >
-            Learn More
-          </Button>
-        </div>
 
         {/* Feature Highlights */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8 mt-10">
@@ -50,10 +34,10 @@ export const Home = () => {
               variant="h6"
               className="text-lg font-bold text-gray-900 mb-2"
             >
-              Centralized Database
+              Professional Training
             </Typography>
             <Typography className="text-sm text-gray-600">
-              Access all customer data in one place for seamless management.
+              Gain in-demand skills with our expert-led training programs.
             </Typography>
           </div>
           <div className="bg-white p-6 rounded-lg shadow-lg hover:scale-105 transition-transform">
@@ -61,10 +45,10 @@ export const Home = () => {
               variant="h6"
               className="text-lg font-bold text-gray-900 mb-2"
             >
-              AI-Powered Insights
+              Internship Opportunities
             </Typography>
             <Typography className="text-sm text-gray-600">
-              Leverage advanced analytics to make informed decisions quickly.
+              Get hands-on experience with real-world projects.
             </Typography>
           </div>
           <div className="bg-white p-6 rounded-lg shadow-lg hover:scale-105 transition-transform">
@@ -72,10 +56,10 @@ export const Home = () => {
               variant="h6"
               className="text-lg font-bold text-gray-900 mb-2"
             >
-              Seamless Integration
+              Career Guidance
             </Typography>
             <Typography className="text-sm text-gray-600">
-              Connect effortlessly with tools you already use.
+              Receive personalized career advice to achieve your goals.
             </Typography>
           </div>
         </div>

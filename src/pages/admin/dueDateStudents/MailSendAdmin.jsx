@@ -37,7 +37,7 @@ export const MailSend = ({ isModalOpen, setIsModalOpen, selectedEntry }) => {
   const sendEmailToStudent = async (emailReq) => {
     try {
       const jwt = localStorage.getItem("jwt");
-      const res = await sendEmail(jwt, emailReq, "manager");
+      const res = await sendEmail(jwt, emailReq, "admin");
       return res;
     } catch (error) {
       return console.log(error);

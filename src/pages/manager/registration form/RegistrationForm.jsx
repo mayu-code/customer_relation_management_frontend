@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button } from "@material-tailwind/react";
+import { Button, radio } from "@material-tailwind/react";
 import { getCources, sendRegistrationForm } from "../../../api/apiData";
 import PersonalDetails from "./PersonalDetails";
 import QualificationDetails from "./QualificationDetails";
@@ -29,8 +29,12 @@ export const RegistrationForm = () => {
 
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
+  const [isInstallment, setIsInstallment] = useState(false);
+  const [image, setImage] = useState(null);
+  const [isSubmit, setIsSubmit] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
 
-  const paymentTypes = ["CASH", "CHEQUE", "ONLINE"];
+  const paymentTypes = ["CASH", "CHEQUE", "ONLINE", "INSTALLMENT"];
 
   const { data, isLoading } = useQuery({
     queryKey: ["courses"],
@@ -44,6 +48,23 @@ export const RegistrationForm = () => {
       }
     },
   });
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+
+    if (file) {
+      const maxSizeInBytes = 600 * 1024; // 600KB in bytes
+      if (file.size > maxSizeInBytes) {
+        setErrorMessage(
+          "File size exceeds 600KB. Please upload a smaller image."
+        );
+        setImage(null); // Reset the image
+      } else {
+        setErrorMessage(""); // Clear error message
+        setImage(file); // Set the image if it meets the size criteria
+      }
+    }
+  };
 
   // Calculate Installments
   useEffect(() => {
@@ -68,92 +89,54 @@ export const RegistrationForm = () => {
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
-    // Validate fields as the user types
+    setFormData((prevState) => {
+      let updatedState = { ...prevState };
+
+      // Handle radio input for payment type
+      if (type === "radio" && name === "paymentType") {
+        updatedState.paymentType = value;
+
+        // Update isInstallment based on payment type
+        setIsInstallment(value.toUpperCase() === "INSTALLMENT");
+
+        // Reset installment-related fields if payment type is not "INSTALLMENT"
+        if (value.toUpperCase() !== "INSTALLMENT") {
+          updatedState.installmentMonths = 0;
+          updatedState.installments = 0;
+        }
+      }
+      // Handle checkbox inputs
+      else if (type === "checkbox" && name === "source") {
+        updatedState.source = checked
+          ? [...prevState.source, value]
+          : prevState.source.filter((item) => item !== value);
+      }
+      // Handle other input types
+      else {
+        updatedState[name] = value;
+      }
+
+      validateField(name, value); // Inline validation
+
+      return updatedState;
+    });
+  };
+
+  // Real-time validation function
+  const validateField = (name, value) => {
     let newErrors = { ...errors };
 
-    if (type === "checkbox" && name === "source") {
-      setFormData((prevState) => {
-        const updatedSource = checked
-          ? [...prevState.source, value] // Add selected source
-          : prevState.source.filter((item) => item !== value); // Remove unselected source
-
-        console.log("Updated source array:", updatedSource); // Debug log
-
-        return { ...prevState, source: updatedSource };
-      });
-    } else {
-      setFormData({ ...formData, [name]: value });
-    }
-
-    // Real-time validation
-    if (name === "name" && !value.trim()) {
-      newErrors.name = "Name is required.";
-    } else {
-      delete newErrors.name;
-    }
-
-    if (name === "email" && value && !/\S+@\S+\.\S+/.test(value)) {
-      newErrors.email = "Email is not valid.";
-    } else {
-      delete newErrors.email;
-    }
-
-    if (name === "contact" && value && !/^\d{10}$/.test(value)) {
-      newErrors.contact = "Contact number should be 10 digits.";
-    } else {
-      delete newErrors.contact;
-    }
-
-    // Validate College and Branch fields
-    if (name === "college" && !value.trim()) {
-      newErrors.college = "College name is required.";
-    } else {
-      delete newErrors.college;
-    }
-
-    if (name === "branch" && !value.trim()) {
-      newErrors.branch = "Branch name is required.";
-    } else {
-      delete newErrors.branch;
-    }
-
-    if (name === "amountPaid" && value && isNaN(value)) {
+    if (name === "amountPaid" && isNaN(value)) {
       newErrors.amountPaid = "Amount paid should be a valid number.";
-    } else {
-      delete newErrors.amountPaid;
-    }
-
-    if (name === "installmentMonths" && value && isNaN(value)) {
+    } else if (name === "installmentMonths" && isInstallment && isNaN(value)) {
       newErrors.installmentMonths =
-        "Installment months should be a valid number."; // Corrected here
-    } else {
-      delete newErrors.installmentMonths;
-    }
-
-    if (name === "totalFees" && value && isNaN(value)) {
+        "Installment months should be a valid number.";
+    } else if (name === "totalFees" && isNaN(value)) {
       newErrors.totalFees = "Total fees should be a valid number.";
-    } else {
-      delete newErrors.totalFees;
-    }
-
-    if (name === "qualification" && !value) {
-      newErrors.qualification = "Qualification is required.";
-    } else {
-      delete newErrors.qualification;
-    }
-
-    // Validate if at least one source is selected
-    if (formData.source.length === 0) {
-      newErrors.source = "At least one source must be selected.";
-    } else {
-      delete newErrors.source;
-    }
-
-    // Validate payment type
-    if (name === "paymentType" && !formData.paymentType) {
+    } else if (name === "paymentType" && !value) {
       newErrors.paymentType = "Payment Type is required.";
     } else {
-      delete newErrors.paymentType;
+      delete newErrors[name];
     }
 
     setErrors(newErrors);
@@ -191,6 +174,7 @@ export const RegistrationForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsSubmit(false);
 
     // Perform final validation before submission
     let newErrors = {};
@@ -203,15 +187,29 @@ export const RegistrationForm = () => {
     if (!formData.college.trim())
       newErrors.college = "College name is required.";
     if (!formData.branch.trim()) newErrors.branch = "Branch name is required.";
-    if (!formData.amountPaid || isNaN(formData.amountPaid))
+
+    // Validate amountPaid based on payment type
+    if (!formData.amountPaid || isNaN(formData.amountPaid)) {
       newErrors.amountPaid = "Amount paid should be a valid number.";
-    if (!formData.installmentMonths || isNaN(formData.installmentMonths))
-      newErrors.installmentMonths =
-        "Installment months should be a valid number.";
+    } else if (
+      formData.paymentType !== "INSTALLMENT" &&
+      parseInt(formData.amountPaid) !== formData.totalFees
+    ) {
+      newErrors.amountPaid =
+        "Amount paid should be equal to total fees for non-installment payment.";
+    }
+
     if (!formData.totalFees || isNaN(formData.totalFees))
       newErrors.totalFees = "Total fees should be a valid number.";
     if (!formData.qualification)
       newErrors.qualification = "Qualification is required.";
+
+    // Installment validation should only occur if INSTALLMENT is selected
+    if (formData.paymentType === "INSTALLMENT") {
+      if (!formData.installmentMonths || isNaN(formData.installmentMonths))
+        newErrors.installmentMonths =
+          "Installment months should be a valid number.";
+    }
 
     // Check if at least one course is selected
     if (formData.registeredCourses.length === 0)
@@ -230,6 +228,11 @@ export const RegistrationForm = () => {
     if (Object.keys(newErrors).length > 0) {
       setErrors(newErrors);
       return; // Stop form submission if errors exist
+    }
+
+    if (!image) {
+      setErrorMessage("Please upload an image.");
+      return;
     }
 
     // Form submission logic
@@ -251,14 +254,47 @@ export const RegistrationForm = () => {
 
     const jwt = localStorage.getItem("jwt");
 
-    console.log(submissionData);
+    const formData2 = new FormData();
+    const registration = { ...submissionData };
+
+    // Append data
+    formData2.append(
+      "registrationForm",
+      new Blob([JSON.stringify(registration)], { type: "application/json" })
+    );
+
+    if (image) formData2.append("image", image);
+
+    // console.log(image);
+
+    // / Enhanced logging
+    // console.log("FormData entries:");
+    // for (let [key, value] of formData2.entries()) {
+    //   if (value instanceof Blob) {
+    //     console.log(`${key}: Blob`, {
+    //       name: value.name,
+    //       size: value.size,
+    //       type: value.type,
+    //     });
+    //     } else if (value instanceof File) {
+    //       console.log(`${key}: File`, {
+    //         name: value.name,
+    //         size: value.size,
+    //         type: value.type,
+    //       });
+    //     } else {
+    //     console.log(`${key}:`, value);
+    //   }
+    // }
 
     try {
-      const res = await sendRegistrationForm(jwt, submissionData);
-      console.log("Form submitted successfully:", res?.data?.message);
+      const res = await sendRegistrationForm(jwt, formData2);
+      alert(res?.data?.message);
+      setIsSubmit(true);
       navigate("/manager/registrations");
     } catch (error) {
-      console.error("Error submitting form:", error);
+      alert(error?.message);
+      setIsSubmit(true);
     }
   };
 
@@ -272,6 +308,9 @@ export const RegistrationForm = () => {
           formData={formData}
           errors={errors}
           handleChange={handleChange}
+          image={image}
+          handleImageChange={handleImageChange}
+          errorMessage={errorMessage}
         />
 
         <QualificationDetails
@@ -307,10 +346,11 @@ export const RegistrationForm = () => {
           errors={errors}
           handleChange={handleChange}
           paymentTypes={paymentTypes}
+          isInstallment={isInstallment}
         />
         <div className="flex justify-center items-center">
           <Button type="submit" className="mt-4">
-            Submit
+            {isSubmit ? "Submit" : "Submitting..."}
           </Button>
         </div>
       </form>

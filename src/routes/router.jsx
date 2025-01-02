@@ -16,10 +16,17 @@ import { EnquiryForm } from "../pages/manager/enquiry form/EnquiryForm";
 import { RegistrationForm } from "../pages/manager/registration form/RegistrationForm";
 import AdminDashboard from "../pages/admin/AdminDashboard";
 import ViewCourses from "../pages/admin/courses/ViewCourses";
-import ManagerDashboard from "../pages/admin/AdminDashboard";
 import { RegistrationDetail } from "../pages/manager/registrations/RegistrationDetail";
 import { EnquiryDetailPage } from "../pages/manager/enquiries/EnquiryDetail";
 import { DueDate } from "../pages/manager/dueDateStudents/DueDate";
+import { DueDateAdmin } from "../pages/admin/dueDateStudents/DueDateAdmin";
+import ManagersList from "../pages/admin/managers/ApprovedManagers";
+import ManagersReq from "../pages/admin/managers/NotApprovedManagers";
+import ManagerDashboard from "../pages/manager/dashboard/ManagerDashboard";
+import { AdminEnquiries } from "../pages/admin/enquiries/Enquiries";
+import { AdminRegistrations } from "../pages/admin/registrations/Registrations";
+import { AdminRegistrationDetail } from "../pages/admin/registrations/RegistrationDetail";
+import ManagerDetail from "../pages/admin/managers/ManagerDetail";
 
 export const router = createBrowserRouter([
   {
@@ -107,6 +114,30 @@ export const router = createBrowserRouter([
           {
             path: "/admin/courses",
             element: <ViewCourses />,
+          },
+          {
+            path: "/admin/due-dates",
+            element: <DueDateAdmin />,
+          },
+          {
+            path: "/admin/managers",
+            element: <ManagersList />,
+          },
+          {
+            path: "/admin/request",
+            element: <ManagersReq />,
+          },
+          {
+            path: "/admin/enquiries",
+            element: <AdminEnquiries />,
+          },
+          {
+            path: "/admin/registrations",
+            element: <AdminRegistrations />,
+          },
+          {
+            path: "/admin/manager/:id",
+            element: <ManagerDetail />,
           },
         ],
       },

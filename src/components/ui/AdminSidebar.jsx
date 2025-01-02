@@ -20,6 +20,8 @@ import {
   PencilSquareIcon,
   AcademicCapIcon,
   CalendarDaysIcon,
+  UserGroupIcon,
+  ArrowDownCircleIcon,
 } from "@heroicons/react/24/solid";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
@@ -38,11 +40,13 @@ export const Sidebar = ({ user }) => {
 
   const handleLogout = () => {
     // localStorage.removeItem("jwt");
-    localStorage.clear();
-    dispatch(deleteUser());
-    // setUser1(null);
-    alert("Logout successful!");
-    navigate("/admin-login");
+    const confirmLogout = confirm("Are you sure, you want to logout?");
+    if (confirmLogout) {
+      localStorage.clear();
+      dispatch(deleteUser());
+      // setUser1(null);
+      navigate(`${user.role === "ADMIN" ? "/admin-login" : "/manager-login"}`);
+    }
   };
 
   const toggleSidebar = () => {
@@ -64,14 +68,14 @@ export const Sidebar = ({ user }) => {
           isSidebarOpen
             ? "translate-x-0 top-20 z-50 h-lvh"
             : "-translate-x-full"
-        } lg:relative lg:translate-x-0 w-64 p-4 mt-1`}
+        } lg:relative lg:translate-x-0 w-1/6 p-4 mt-1`}
       >
         {/* Close Sidebar Button */}
 
         <div className="flex justify-between">
           <div className="mb-2 p-4">
             <Typography variant="h5" color="blue-gray">
-              Sidebar
+              CRM
             </Typography>
           </div>
 
@@ -96,6 +100,26 @@ export const Sidebar = ({ user }) => {
             </ListItem>
           </NavLink>
           {user.role === "ADMIN" && (
+            <NavLink to="/admin/managers">
+              <ListItem>
+                <ListItemPrefix>
+                  <UserGroupIcon className="h-5 w-5" />
+                </ListItemPrefix>
+                All Managers
+              </ListItem>
+            </NavLink>
+          )}
+          {user.role === "ADMIN" && (
+            <NavLink to="/admin/request">
+              <ListItem>
+                <ListItemPrefix>
+                  <ArrowDownCircleIcon className="h-5 w-5" />
+                </ListItemPrefix>
+                Approval Request
+              </ListItem>
+            </NavLink>
+          )}
+          {user.role === "ADMIN" && (
             <NavLink to="/admin/courses">
               <ListItem>
                 <ListItemPrefix>
@@ -105,7 +129,11 @@ export const Sidebar = ({ user }) => {
               </ListItem>
             </NavLink>
           )}
-          <NavLink to="/manager/enquiries">
+          <NavLink
+            to={`${
+              user.role === "ADMIN" ? "/admin/enquiries" : "/manager/enquiries"
+            }`}
+          >
             <ListItem>
               <ListItemPrefix>
                 <NewspaperIcon className="h-5 w-5" />
@@ -113,7 +141,13 @@ export const Sidebar = ({ user }) => {
               Enquiries
             </ListItem>
           </NavLink>
-          <NavLink to="/manager/registrations">
+          <NavLink
+            to={`${
+              user.role === "ADMIN"
+                ? "/admin/registrations"
+                : "/manager/registrations"
+            }`}
+          >
             <ListItem>
               <ListItemPrefix>
                 <ClipboardIcon className="h-5 w-5" />
@@ -121,7 +155,11 @@ export const Sidebar = ({ user }) => {
               Registrations
             </ListItem>
           </NavLink>
-          <NavLink to="/manager/due-dates">
+          <NavLink
+            to={`${
+              user.role === "ADMIN" ? "/admin/due-dates" : "/manager/due-dates"
+            }`}
+          >
             <ListItem>
               <ListItemPrefix>
                 <CalendarDaysIcon className="h-5 w-5" />
@@ -129,7 +167,7 @@ export const Sidebar = ({ user }) => {
               Due Dates
             </ListItem>
           </NavLink>
-          <NavLink to="/manager/enquiry-form">
+          {/* <NavLink to="/manager/enquiry-form">
             <ListItem>
               <ListItemPrefix>
                 <PencilSquareIcon className="h-5 w-5" />
@@ -156,7 +194,7 @@ export const Sidebar = ({ user }) => {
               </ListItemPrefix>
               Profile
             </ListItem>
-          </NavLink>
+          </NavLink>                   */}
           <ListItem onClick={handleLogout}>
             <ListItemPrefix>
               <PowerIcon className="h-5 w-5" />

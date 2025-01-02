@@ -26,8 +26,8 @@ const enquiryData = [
 ];
 
 const expenditureData = [
-  { category: "Salaries", amount: 3000 },
-  { category: "Marketing", amount: 2000 },
+  { category: "registrations", amount: 3000 },
+  { category: "investments", amount: 2000 },
   { category: "Utilities", amount: 1500 },
   { category: "Miscellaneous", amount: 1000 },
 ];
@@ -80,21 +80,8 @@ const ManagerDashboard = () => {
         </Grid>
       </Grid>
 
-      <Grid container spacing={4} className="mt-8">
-        <Grid item xs={12} md={6}>
-          <RecentRegistrations registrations={registrationList} />
-        </Grid>
-        <Grid item xs={12} md={6}>
-          <RecentEnquiries
-            enquiries={enquiryList}
-            onEnquirySelect={handleEnquirySelect}
-          />
-        </Grid>
-      </Grid>
-
-      {selectedEnquiry && <EnquiryDetails enquiry={selectedEnquiry} />}
-
       <RegistrationTable registrations={registrationList} />
+      <RecentEnquiries enquiries={enquiryList} />
     </div>
   );
 };

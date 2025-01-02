@@ -34,6 +34,15 @@ export const getManager = (jwt) => {
   });
 };
 
+export const getManagerById = (jwt, id) => {
+  return api.get(`/admin/getManagerById/${id}`, {
+    headers: {
+      // Corrected from 'Headers' to 'headers'
+      Authorization: `Bearer ${jwt}`,
+    },
+  });
+};
+
 export const getAdmin = (jwt) => {
   return api.get("/admin/getAdmin", {
     headers: {
@@ -61,12 +70,13 @@ export const sendRegistrationForm = (jwt, formReq) => {
     headers: {
       // Corrected from 'Headers' to 'headers'
       Authorization: `Bearer ${jwt}`,
+      "Content-Type": "multipart/form-data",
     },
   });
 };
 
-export const getEnquiries = (jwt) => {
-  return api.get("/manager/enquiries", {
+export const getEnquiries = (jwt, entity) => {
+  return api.get(`/${entity}/enquiries`, {
     headers: {
       // Corrected from 'Headers' to 'headers'
       Authorization: `Bearer ${jwt}`,
@@ -74,8 +84,8 @@ export const getEnquiries = (jwt) => {
   });
 };
 
-export const getRegistrations = (jwt) => {
-  return api.get("/manager/registrations", {
+export const getRegistrations = (jwt, entity) => {
+  return api.get(`/${entity}/registrations`, {
     headers: {
       // Corrected from 'Headers' to 'headers'
       Authorization: `Bearer ${jwt}`,
@@ -198,8 +208,8 @@ export const getEnquiryDetail = (jwt, id) => {
   });
 };
 
-export const sendEmail = (jwt, emailReq) => {
-  return api.post("/manager/sendEmail", emailReq, {
+export const sendEmail = (jwt, emailReq, entity) => {
+  return api.post(`/${entity}/sendEmail`, emailReq, {
     headers: {
       // Corrected from 'Headers' to 'headers'
       Authorization: `Bearer ${jwt}`,
@@ -251,8 +261,8 @@ export const getDistinctQualification = (jwt) => {
     },
   });
 };
-export const getDueRegistration = (jwt) => {
-  return api.get("/manager/getDueForm", {
+export const getDueRegistration = (jwt, entity) => {
+  return api.get(`/${entity}/getDueForm`, {
     headers: {
       // Corrected from 'Headers' to 'headers'
       Authorization: `Bearer ${jwt}`,
@@ -269,8 +279,44 @@ export const updateEquiryForm = (jwt, enquiryFormReq) => {
   });
 };
 
-export const payAmount = (jwt, payReq) => {
-  return api.post("/manager/payAmount", payReq, {
+export const payAmount = (jwt, payReq, entity) => {
+  return api.post(`/${entity}/payAmount`, payReq, {
+    headers: {
+      // Corrected from 'Headers' to 'headers'
+      Authorization: `Bearer ${jwt}`,
+    },
+  });
+};
+
+export const getAllManagers = (jwt) => {
+  return api.get("/admin/getAllManagers", {
+    headers: {
+      // Corrected from 'Headers' to 'headers'
+      Authorization: `Bearer ${jwt}`,
+    },
+  });
+};
+
+export const getAllAprrovalReq = (jwt) => {
+  return api.get("/admin/getAllApprovalRequest", {
+    headers: {
+      // Corrected from 'Headers' to 'headers'
+      Authorization: `Bearer ${jwt}`,
+    },
+  });
+};
+
+export const ApproveManager = (jwt, ApprovalReq) => {
+  return api.post("/admin/approveManager", ApprovalReq, {
+    headers: {
+      // Corrected from 'Headers' to 'headers'
+      Authorization: `Bearer ${jwt}`,
+    },
+  });
+};
+
+export const ActiveManager = (jwt, ApprovalReq) => {
+  return api.post("/admin/activeManager", ApprovalReq, {
     headers: {
       // Corrected from 'Headers' to 'headers'
       Authorization: `Bearer ${jwt}`,

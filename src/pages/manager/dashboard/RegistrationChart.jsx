@@ -1,34 +1,31 @@
 // src/components/RegistrationChart.js
 import React from "react";
-import { Paper, Typography } from "@mui/material";
 import {
-  LineChart,
-  Line,
-  CartesianGrid,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
   Tooltip,
-  Legend,
+  CartesianGrid,
   ResponsiveContainer,
 } from "recharts";
 
 const RegistrationChart = ({ data }) => {
   return (
-    <Paper className="p-6 bg-white shadow-lg rounded-xl">
-      <Typography variant="h6" className="font-medium mb-4 text-gray-800">
-        Registrations Over Time
-      </Typography>
-      <ResponsiveContainer width="100%" height={250}>
-        <LineChart data={data}>
+    <div className="bg-white p-4 shadow-md rounded-xl">
+      <h3 className="text-lg font-semibold mb-4 text-gray-700">
+        Monthly Registrations
+      </h3>
+      <ResponsiveContainer width="100%" height={300}>
+        <BarChart data={data}>
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="name" />
+          <XAxis dataKey="month" />
           <YAxis />
           <Tooltip />
-          <Legend />
-          <Line type="monotone" dataKey="registrations" stroke="#8884d8" />
-        </LineChart>
+          <Bar dataKey="count" fill="#4F46E5" />
+        </BarChart>
       </ResponsiveContainer>
-    </Paper>
+    </div>
   );
 };
 

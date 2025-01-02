@@ -129,7 +129,7 @@ export const EnquiryForm = () => {
   const submitEnquiryReq = async (formReq) => {
     try {
       const res = await sendEnquiryForm(jwt, formReq);
-      return res?.data?.data;
+      return alert(res?.data?.message);
     } catch (error) {
       console.log(error);
       return alert("Error submitting form: " + error.message);

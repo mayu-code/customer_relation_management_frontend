@@ -2,15 +2,11 @@ import { EyeIcon } from "@heroicons/react/24/solid";
 import { Button } from "@material-tailwind/react";
 import { useNavigate } from "react-router-dom";
 
-export const RegistrationTable = ({ registrations }) => {
+export const AdminRegistrationTable = ({ registrations }) => {
   const navigate = useNavigate();
 
   const handleRowClick = (id) => {
-    navigate(`/manager/registration/${id}`);
-  };
-
-  const handleCreateButtonClick = () => {
-    navigate("/manager/registration-form");
+    navigate(`/admin/registration/${id}`);
   };
 
   return (
@@ -89,9 +85,6 @@ export const RegistrationTable = ({ registrations }) => {
               >
                 <div className="p-2 flex flex-col gap-2 justify-center items-center">
                   <p>No registrations found. create one.</p>
-                  <Button size="sm" onClick={handleCreateButtonClick}>
-                    Create
-                  </Button>
                 </div>
               </td>
             </tr>

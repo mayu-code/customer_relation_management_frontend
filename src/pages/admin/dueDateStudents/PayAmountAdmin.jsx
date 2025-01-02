@@ -44,13 +44,13 @@ export const PayAmount = ({
     try {
       const jwt = localStorage.getItem("jwt");
 
-      const res = await payAmount(jwt, payReq, "manager");
-      return alert(res?.data?.message);
+      return await payAmount(jwt, payReq, "admin");
     } catch (error) {
-      console.log(error);
-      return alert(error?.message);
+      return console.log(error);
     }
   };
+
+  const navigate = useNavigate();
 
   // Handle radio button change for payment type
   const handlePaymentTypeChange = (e) => {
@@ -79,6 +79,7 @@ export const PayAmount = ({
       paymentType: "",
       email: "",
     });
+    alert("Fees paid successfully");
     refetch();
     // navigate(0);
   };

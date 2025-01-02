@@ -1,6 +1,13 @@
 import { Input } from "@material-tailwind/react";
 
-const PersonalDetails = ({ formData, errors, handleChange }) => {
+const PersonalDetails = ({
+  formData,
+  errors,
+  handleChange,
+  image,
+  handleImageChange,
+  errorMessage,
+}) => {
   return (
     <div className="mb-6">
       <h2 className="text-lg font-semibold mb-2">Personal Details</h2>
@@ -61,6 +68,17 @@ const PersonalDetails = ({ formData, errors, handleChange }) => {
         {errors.branch && (
           <p className="text-red-500 text-sm">{errors.branch}</p>
         )}
+      </div>
+      <div className="mt-5">
+        <Input
+          label="image"
+          name="image"
+          type="file"
+          accept="image/*"
+          onChange={handleImageChange}
+          error={errorMessage}
+        />
+        {errorMessage && <p style={{ color: "red" }}>{errorMessage}</p>}
       </div>
     </div>
   );
