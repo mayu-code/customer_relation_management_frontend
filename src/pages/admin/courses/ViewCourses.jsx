@@ -141,7 +141,7 @@ const ViewCourses = () => {
 
       <table className="w-full border-collapse border border-gray-300">
         <thead>
-          <tr className="bg-gray-200">
+          <tr className="bg-gray-300">
             <th className="border p-2 text-center">Sr. No.</th>
             <th className="border p-2 text-center">Course Name</th>
             <th className="border p-2 text-center">Duration</th>
@@ -152,13 +152,19 @@ const ViewCourses = () => {
         <tbody>
           {courses.map((course, index) => (
             <tr key={course.id || index}>
-              <td className="border p-2 text-center">{index + 1}</td>
-              <td className="border p-2 text-center">{course.courseName}</td>
-              <td className="border p-2 text-center">
+              <td className="border p-2 border-gray-300 text-center">
+                {index + 1}
+              </td>
+              <td className="border p-2 border-gray-300 text-center">
+                {course.courseName}
+              </td>
+              <td className="border p-2 border-gray-300 text-center">
                 {course.courseDuration}
               </td>
-              <td className="border p-2 text-center">₹{course.price}</td>
-              <td className="border p-2 text-center">
+              <td className="border p-2 border-gray-300 text-center">
+                ₹{course.price}
+              </td>
+              <td className="border p-2 border-gray-300 text-center">
                 <Button
                   variant="outlined"
                   color="red"

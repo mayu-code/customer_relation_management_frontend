@@ -11,28 +11,32 @@ const EnquiriesTable = ({ enquiries }) => {
       <div className="overflow-x-auto mt-5 bg-white shadow-sm ">
         <table className="table-auto w-full text-left border-collapse border border-gray-200">
           <thead>
-            <tr className="bg-gray-100">
-              <th className="border border-gray-300 px-4 py-2">ID</th>
+            <tr className="bg-gray-300">
               <th className="border border-gray-300 px-4 py-2">Student Name</th>
+              <th className="border border-gray-300 px-4 py-2">
+                Student Email
+              </th>
               <th className="border border-gray-300 px-4 py-2">Enquiry Date</th>
-              <th className="border border-gray-300 px-4 py-2">Query</th>
+              <th className="border border-gray-300 px-4 py-2">Enquiry Type</th>
             </tr>
           </thead>
           <tbody>
-            {enquiries.length > 0 ? (
+            {enquiries && enquiries.length > 0 ? (
               enquiries.map((enquiry) => (
                 <tr key={enquiry.id} className="hover:bg-gray-50">
-                  <td className="border border-gray-300 px-4 py-2">
-                    {enquiry.id}
-                  </td>
                   <td className="border border-gray-300 px-4 py-2">
                     {enquiry.name}
                   </td>
                   <td className="border border-gray-300 px-4 py-2">
-                    {enquiry.date}
+                    {enquiry.email}
                   </td>
                   <td className="border border-gray-300 px-4 py-2">
-                    {enquiry.query}
+                    {enquiry.enquiryDate}
+                  </td>
+                  <td className="border border-gray-300 px-4 py-2">
+                    {enquiry.enquiryDetails
+                      .map((detail) => detail.enquiryType)
+                      .join(", ")}
                   </td>
                 </tr>
               ))

@@ -93,7 +93,7 @@ export const MailSend = ({ isModalOpen, setIsModalOpen, selectedEntry }) => {
               label="Name"
               name="name"
               value={emailForm.name}
-              disabled // Display only, not editable
+              readOnly // Display only, not editable
             />
           </div>
           <div className="mb-4">
@@ -103,7 +103,7 @@ export const MailSend = ({ isModalOpen, setIsModalOpen, selectedEntry }) => {
               name="to"
               value={emailForm.to}
               onChange={handleEmailFormChange}
-              disabled // Prefilled from the selected entry, not editable
+              readOnly // Prefilled from the selected entry, not editable
             />
           </div>
           <div className="mb-4">

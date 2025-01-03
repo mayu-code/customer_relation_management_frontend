@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
-import { getRegistrationById } from "../../../api/apiData";
+import { getRegistrationById, updateRegistration } from "../../../api/apiData";
 import { useQuery } from "@tanstack/react-query";
 import { Input, Button } from "@material-tailwind/react";
 import { PencilSquareIcon } from "@heroicons/react/24/solid";
@@ -173,18 +173,22 @@ export const AdminRegistrationDetail = () => {
 
     console.log("Full Payload to send:", payload);
 
-    // try {
-    //   // Assuming updateEnquiry function sends the updated data to the backend
-    //   await updateEquiryForm(jwt, payload);
-    //   setEditFields({});
-    //   setShowUpdateButton(false);
-    //   alert("Enquiry updated successfully!");
-    //   navigate(0);
-    // } catch (error) {
-    //   console.error("Error updating enquiry", error);
-    //   setEditFields({});
-    //   setShowUpdateButton(false);
-    // }
+    try {
+      // Assuming updateEnquiry function sends the updated data to the backend
+      const res = await updateRegistration(jwt, payload);
+      setEditFields({});
+      setShowUpdateButton(false);
+      setShowDeleteButton(false);
+      alert(res?.data?.message);
+      refetch();
+    } catch (error) {
+      console.error("Error updating enquiry", error);
+      alert(error?.message);
+      setEditFields({});
+      setShowUpdateButton(false);
+      setShowDeleteButton(false);
+      refetch();
+    }
   };
 
   const handleCancelClick = () => {

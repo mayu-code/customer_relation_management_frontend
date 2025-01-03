@@ -41,33 +41,23 @@ const ManagersList = () => {
       </div>
       <div className="flex justify-center items-center">
         <table className="table-auto border-collapse border border-gray-300">
-          <thead className="bg-gray-200">
+          <thead className="bg-gray-300">
             <tr>
-              <th className="border border-gray-300 px-4 py-2">ID</th>
-              <th className="border border-gray-300 px-4 py-2">Name</th>
-              <th className="border border-gray-300 px-4 py-2">Email</th>
-              <th className="border border-gray-300 px-4 py-2">Contact</th>
-              <th className="border border-gray-300 px-4 py-2">
-                Registation Date
-              </th>
-              <th className="border border-gray-300 px-4 py-2">Last Login</th>
-              <th className="border border-gray-300 px-4 py-2">
-                Total Enquiries
-              </th>
-              <th className="border border-gray-300 px-4 py-2">
-                Total Registrations
-              </th>
-              <th className="border border-gray-300 px-4 py-2">Status</th>
-              <th className="border border-gray-300 px-4 py-2">Actions</th>
+              <th className="border  px-4 py-2">Name</th>
+              <th className="border  px-4 py-2">Email</th>
+              <th className="border  px-4 py-2">Contact</th>
+              <th className="border  px-4 py-2">Registation Date</th>
+              <th className="border  px-4 py-2">Last Login</th>
+              <th className="border  px-4 py-2">Total Enquiries</th>
+              <th className="border  px-4 py-2">Total Registrations</th>
+              <th className="border  px-4 py-2">Status</th>
+              <th className="border  px-4 py-2">Actions</th>
             </tr>
           </thead>
           <tbody>
             {managers.length > 0 ? (
               managers.map((manager) => (
                 <tr key={manager.id}>
-                  <td className="border border-gray-300 px-4 py-2 text-center">
-                    {manager.id}
-                  </td>
                   <td className="border border-gray-300 px-4 py-2 text-center">
                     {manager.name || "N/A"}
                   </td>
@@ -84,10 +74,10 @@ const ManagersList = () => {
                     {manager.loginDate || "N/A"}
                   </td>
                   <td className="border border-gray-300 px-4 py-2 text-center">
-                    {manager.equiries?.length || "N/A"}
+                    {manager.equiries?.length || 0}
                   </td>
                   <td className="border border-gray-300 px-4 py-2 text-center">
-                    {manager.registrations?.length || "N/A"}
+                    {manager.registrations?.length || 0}
                   </td>
                   <td className="border border-gray-300 px-4 py-2  text-center">
                     <div

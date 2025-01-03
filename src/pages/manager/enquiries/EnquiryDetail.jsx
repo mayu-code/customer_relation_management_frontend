@@ -35,6 +35,7 @@ export const EnquiryDetailPage = () => {
     data: enquiry,
     isLoading,
     isError,
+    refetch,
   } = useQuery({
     queryKey: ["enquiries", id], // Unique query key
     queryFn: async () => {
@@ -192,7 +193,7 @@ export const EnquiryDetailPage = () => {
 
     try {
       // Submit new enquiry detail
-      await addEnquiryDetailForEnquiry(formValues);
+      const res = await addEnquiryDetailForEnquiry(formValues);
       // Reset form
       setFormValues({
         enquiryType: "",
@@ -201,7 +202,7 @@ export const EnquiryDetailPage = () => {
       });
       setFormErrors({}); // Clear errors
       // Show alert
-      alert("Enquiry detail added successfully!");
+      alert(res?.data?.message);
       // Refetch the existing enquiry details to reflect the new entry
       queryClient.invalidateQueries(["enquiryDetails", enquiry?.id]);
     } catch (error) {
@@ -219,18 +220,22 @@ export const EnquiryDetailPage = () => {
     }
   };
 
-  const { data: enquiryDetails } = useQuery({
+  const { data: enquiryDetails, refetch: refetchDetail } = useQuery({
     queryKey: ["enquiryDetails", enquiry?.id],
     queryFn: fetchAllEnquiryDetails,
   });
 
   const sendEmailToStudent = async () => {
     try {
-      const res = await sendEmail(jwt, {
-        to: enquiry.email,
-        subject: emailForm.subject,
-        body: emailForm.body,
-      });
+      const res = await sendEmail(
+        jwt,
+        {
+          to: enquiry.email,
+          subject: emailForm.subject,
+          body: emailForm.body,
+        },
+        "manager"
+      );
       return res;
     } catch (error) {
       return console.log(error);
@@ -247,6 +252,11 @@ export const EnquiryDetailPage = () => {
       "qualification",
     ]; // Editable fields excluding courses
 
+    const finalCourses = selectedCourses.map((course) => {
+      const { id, ...courseWithoutId } = course; // Exclude `id`
+      return courseWithoutId; // Return the object without `id`
+    });
+
     // Prepare the payload for backend submission
     const payload = {
       id: enquiry.id, // Include the enquiry ID for the update
@@ -256,22 +266,28 @@ export const EnquiryDetailPage = () => {
         return acc;
       }, {}),
       // Include the courses (with id for existing and without id for new)
-      courses: selectedCourses,
+      courses: finalCourses,
     };
+
+    setShowDeleteButton(false);
 
     console.log("Full Payload to send:", payload);
 
     try {
       // Assuming updateEnquiry function sends the updated data to the backend
-      await updateEquiryForm(jwt, payload);
+      const res = await updateEquiryForm(jwt, payload);
       setEditFields({});
       setShowUpdateButton(false);
-      alert("Enquiry updated successfully!");
-      navigate(0);
+      setShowDeleteButton(false);
+      alert(res?.data?.message);
+      refetch();
     } catch (error) {
       console.error("Error updating enquiry", error);
       setEditFields({});
+      setShowDeleteButton(false);
       setShowUpdateButton(false);
+      alert(error?.message);
+      refetch();
     }
   };
 
@@ -501,7 +517,7 @@ export const EnquiryDetailPage = () => {
 
         {/* Form Section */}
         <div className="w-4/12 px-5 mt-0">
-          <div className="border p-5">
+          <div className="border border-gray-400 shadow-lg rounded-lg p-5">
             <h3 className="text-xl font-semibold mb-4">Add Enquiry Details</h3>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
@@ -548,30 +564,33 @@ export const EnquiryDetailPage = () => {
               </Button>
             </form>
           </div>
-          <div className="mt-5 border p-3">
+          <div className="mt-5 border border-gray-400 shadow-lg rounded-lg p-3">
             <h3 className="text-xl font-semibold mb-4">
               Existing Enquiry Details
             </h3>
             {enquiryDetails && enquiryDetails.length > 0 ? (
               <div
-                className="flex flex-col p-2 gap-4 overflow-y-auto"
+                className="flex flex-col rounded-lg p-2 gap-4 overflow-y-auto"
                 style={{ maxHeight: "300px" }} // Set a fixed height for the scrollable area
               >
                 {enquiryDetails.map((detail) => (
                   <div
                     key={detail.id}
-                    className="p-4 border rounded-lg shadow-md"
+                    className="p-4 border border-gray-300  rounded-lg shadow-md"
                   >
-                    <div className="flex px-2 justify-between">
-                      <h4 className="text-lg font-semibold mb-2">
-                        {detail.enquiryType}
-                      </h4>
-                      <p className="text-sm text-gray-700">
-                        <strong>Date:</strong> {detail.enquiryDate || "N/A"}
-                      </p>
+                    <div className="flex  justify-between">
+                      <div>
+                        <h4 className="text-xs font-semibold mb-2">
+                          <strong className="text-gray-600">Type: </strong>
+                          {detail.enquiryType}
+                        </h4>
+                        <p className="text-xs text-gray-700">
+                          <strong>Date:</strong> {detail.enquiryDate || "N/A"}
+                        </p>
+                      </div>
                     </div>
                     <div>
-                      <p className="text-sm p-2 mt-2 border rounded-lg border-gray-500 h-20">
+                      <p className="text-sm p-2 mt-2 border rounded-md border-gray-500 h-16">
                         {detail.enquiryDescription}
                       </p>
                     </div>
@@ -591,8 +610,8 @@ export const EnquiryDetailPage = () => {
         <DialogBody>
           <form onSubmit={handleEmailSubmit}>
             <div className="mb-4">
-              <p className="text-gray-900 text-lg">Send Email To: </p>
-              <Input label="Send to Email" value={enquiry.email} disabled />
+              <p className="text-gray-900 mb-2 text-lg">Send Email To: </p>
+              <Input label="Send to Email" value={enquiry.email} readOnly />
             </div>
             <div className="mb-4">
               <Input
@@ -610,7 +629,6 @@ export const EnquiryDetailPage = () => {
             </div>
             <div className="mb-4">
               <Textarea
-                placeholder="Enter Body"
                 label="Message Body"
                 name="body"
                 value={emailForm.body}

@@ -91,7 +91,7 @@ export const AdminLoginPage = () => {
       <div className="absolute bottom-0 right-0 w-96 h-96 bg-teal-300 rounded-full blur-3xl opacity-20"></div>
 
       {/* Form Content */}
-      <div className="z-10 w-full max-w-md rounded-lg bg-transparent shadow-xl p-8">
+      <div className="z-10 w-full max-w-md rounded-lg bg-white shadow-md p-8">
         <Typography variant="h3" color="blue-gray" className="mb-4 text-center">
           Admin Sign In
         </Typography>

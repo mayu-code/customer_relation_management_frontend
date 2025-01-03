@@ -8,6 +8,11 @@ import RecentRegistrations from "./RecentRegistrations";
 import RecentEnquiries from "./RecentEnquiries";
 import EnquiryDetails from "./EnquiryDetails";
 import RegistrationTable from "./RegistrationTable";
+import { useQuery } from "@tanstack/react-query";
+import {
+  getRecentEnquiries,
+  getRecentRegistrations,
+} from "../../../api/apiData";
 
 const registrationData = [
   { month: "January", count: 50 },
@@ -32,39 +37,37 @@ const expenditureData = [
   { category: "Miscellaneous", amount: 1000 },
 ];
 
-const registrationList = [
-  { id: 1, name: "John Doe", date: "2024-12-01", course: "B.Tech" },
-  { id: 2, name: "Jane Smith", date: "2024-12-02", course: "MBA" },
-  { id: 3, name: "Alice Brown", date: "2024-12-03", course: "MCA" },
-];
-
-const enquiryList = [
-  {
-    id: 1,
-    name: "Sam Wilson",
-    date: "2024-12-01",
-    query: "B.Tech admission process",
-  },
-  {
-    id: 2,
-    name: "Emily Davis",
-    date: "2024-12-02",
-    query: "MBA fees structure",
-  },
-  {
-    id: 3,
-    name: "Michael Johnson",
-    date: "2024-12-03",
-    query: "MCA curriculum",
-  },
-];
-
 const ManagerDashboard = () => {
-  const [selectedEnquiry, setSelectedEnquiry] = useState(null);
+  const jwt = localStorage.getItem("jwt");
 
-  const handleEnquirySelect = (enquiry) => {
-    setSelectedEnquiry(enquiry);
-  };
+  const { data: recentRegistrations } = useQuery({
+    queryKey: ["recentRegistrations"],
+    queryFn: async () => {
+      try {
+        const res = await getRecentRegistrations(jwt, "manager");
+        return res?.data?.data;
+      } catch (error) {
+        console.log(error);
+        return [];
+      }
+    },
+  });
+
+  const { data: recentEnquiries } = useQuery({
+    queryKey: ["recentEnquiries"],
+    queryFn: async () => {
+      try {
+        const res = await getRecentEnquiries(jwt, "manager");
+        // console.log(res);
+        return res?.data?.data;
+      } catch (error) {
+        console.log(error);
+        return [];
+      }
+    },
+  });
+
+  console.log(recentEnquiries);
 
   return (
     <div className="flex-1 p-8 bg-white">
@@ -80,8 +83,8 @@ const ManagerDashboard = () => {
         </Grid>
       </Grid>
 
-      <RegistrationTable registrations={registrationList} />
-      <RecentEnquiries enquiries={enquiryList} />
+      <RegistrationTable registrations={recentRegistrations} />
+      <RecentEnquiries enquiries={recentEnquiries} />
     </div>
   );
 };

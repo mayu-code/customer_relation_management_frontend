@@ -19,7 +19,7 @@ export const DueDateTable = ({ dueForm, refetch }) => {
     <div className="overflow-x-auto">
       {/* Table structure */}
       <table className="min-w-full table-auto border-collapse border border-gray-200">
-        <thead className="bg-gray-100">
+        <thead className="bg-gray-300">
           <tr>
             {[
               "ID",
@@ -43,20 +43,32 @@ export const DueDateTable = ({ dueForm, refetch }) => {
           {dueForm && dueForm.length > 0 ? (
             dueForm.map((entry) => (
               <tr key={entry.id} className="text-center">
-                <td className="px-4 py-2 border">{entry.id}</td>
-                <td className="px-4 py-2 border">{entry.name}</td>
-                <td className="px-4 py-2 border">{entry.email}</td>
-                <td className="px-4 py-2 border">₹{entry.totalFees}</td>
-                <td className="px-4 py-2 border text-green-500">
+                <td className="px-4 py-2 border border-gray-300">{entry.id}</td>
+                <td className="px-4 py-2 border border-gray-300">
+                  {entry.name}
+                </td>
+                <td className="px-4 py-2 border border-gray-300">
+                  {entry.email}
+                </td>
+                <td className="px-4 py-2 border border-gray-300">
+                  ₹{entry.totalFees}
+                </td>
+                <td className="px-4 py-2 border border-gray-300 text-green-500">
                   ₹{entry.amountPaid}
                 </td>
-                <td className="px-4 py-2 border text-red-500">
+                <td className="px-4 py-2 border border-gray-300 text-red-500">
                   ₹{entry.totalFees - entry.amountPaid}
                 </td>
-                <td className="px-4 py-2 border">{entry.installmentsMonths}</td>
-                <td className="px-4 py-2 border">₹{entry.installments}</td>
-                <td className="px-4 py-2 border">{entry.deuDate}</td>
-                <td className="px-4 py-2 border">
+                <td className="px-4 py-2 border border-gray-300">
+                  {entry.installmentsMonths}
+                </td>
+                <td className="px-4 py-2 border border-gray-300">
+                  ₹{entry.installments}
+                </td>
+                <td className="px-4 py-2 border border-gray-300">
+                  {entry.deuDate}
+                </td>
+                <td className="px-4 py-2 border border-gray-300">
                   <div className="flex justify-center items-center gap-2">
                     <Button
                       variant="filled"

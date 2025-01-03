@@ -1,6 +1,6 @@
 // src/components/Dashboard.js
 import React from "react";
-import { Typography, Grid, Box } from "@mui/material";
+import { Typography, Grid, Box, Paper } from "@mui/material";
 import {
   LineChart,
   Line,
@@ -12,6 +12,8 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { DataGrid } from "@mui/x-data-grid";
+import { getRecentRegistrations } from "../../api/apiData";
+import { useQuery } from "@tanstack/react-query";
 
 const AdminDashboard = () => {
   // Sample data for charts
@@ -74,12 +76,23 @@ const AdminDashboard = () => {
     },
   ];
 
+  const jwt = localStorage.getItem("jwt");
+
+  const { data: recentRegistrations } = useQuery({
+    queryKey: ["recentRegistrations"],
+    queryFn: async () => {
+      try {
+        const res = await getRecentRegistrations(jwt, "admin");
+        return res?.data?.data;
+      } catch (error) {
+        console.log(error);
+        return [];
+      }
+    },
+  });
+
   return (
     <div className="flex-1 p-8">
-      <Typography variant="h4" gutterBottom>
-        Admin Dashboard
-      </Typography>
-
       <Grid container spacing={4}>
         {/* Manager Performance Chart */}
         <Grid item xs={12} md={4}>
@@ -161,25 +174,58 @@ const AdminDashboard = () => {
             </ResponsiveContainer>
           </Box>
         </Grid>
-      </Grid>
 
-      {/* Recent Registrations Table */}
-      <Box className="mt-8">
-        <Typography variant="h6" className="font-medium mb-4 text-gray-800">
-          Recent Registrations
-        </Typography>
-        <div
-          style={{ height: 400, width: "100%" }}
-          className="bg-white shadow-sm rounded-xl"
-        >
-          <DataGrid
-            rows={rows}
-            columns={columns}
-            pageSize={5}
-            className="bg-white rounded-xl shadow-md"
-          />
-        </div>
-      </Box>
+        {/* Recent Registrations Table */}
+        <Box className="mt-8 w-full">
+          <Typography variant="h6" className="font-medium mb-4 text-gray-800">
+            Recent Registrations
+          </Typography>
+          <div className="overflow-x-auto mt-5  bg-white shadow-sm ">
+            <table className="table-auto w-full text-left border-collapse border border-gray-200">
+              <thead>
+                <tr className="bg-gray-300">
+                  <th className="border  px-4 py-2">Student Name</th>
+                  <th className="border  px-4 py-2">Student Email</th>
+                  <th className="border  px-4 py-2">Registration Date</th>
+                  <th className="border  px-4 py-2">Paid Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                {recentRegistrations && recentRegistrations.length > 0 ? (
+                  recentRegistrations.map((registration) => (
+                    <tr key={registration.id} className="hover:bg-gray-50">
+                      <td className="border border-gray-300 px-4 py-2">
+                        {registration.name}
+                      </td>
+                      <td className="border border-gray-300 px-4 py-2">
+                        {registration.email}
+                      </td>
+                      <td className="border border-gray-300 px-4 py-2">
+                        {registration.registrationDate}
+                      </td>
+                      <td className="border border-gray-300 px-4 py-2">
+                        ₹{" "}
+                        <strong className="text-green-500">
+                          {registration.amountPaid}
+                        </strong>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan="4"
+                      className="border border-gray-300 px-4 py-2 text-center text-gray-500"
+                    >
+                      No registrations available.
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </Box>
+      </Grid>
     </div>
   );
 };

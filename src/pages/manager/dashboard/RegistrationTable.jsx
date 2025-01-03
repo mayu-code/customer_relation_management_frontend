@@ -11,30 +11,31 @@ const RegistrationTable = ({ registrations }) => {
       <div className="overflow-x-auto mt-5 bg-white shadow-sm ">
         <table className="table-auto w-full text-left border-collapse border border-gray-200">
           <thead>
-            <tr className="bg-gray-100">
-              <th className="border border-gray-300 px-4 py-2">ID</th>
-              <th className="border border-gray-300 px-4 py-2">Student Name</th>
-              <th className="border border-gray-300 px-4 py-2">
-                Registration Date
-              </th>
-              <th className="border border-gray-300 px-4 py-2">Course</th>
+            <tr className="bg-gray-300">
+              <th className="border  px-4 py-2">Student Name</th>
+              <th className="border  px-4 py-2">Student Email</th>
+              <th className="border  px-4 py-2">Registration Date</th>
+              <th className="border  px-4 py-2">Paid Amount</th>
             </tr>
           </thead>
           <tbody>
-            {registrations.length > 0 ? (
+            {registrations && registrations.length > 0 ? (
               registrations.map((registration) => (
                 <tr key={registration.id} className="hover:bg-gray-50">
-                  <td className="border border-gray-300 px-4 py-2">
-                    {registration.id}
-                  </td>
                   <td className="border border-gray-300 px-4 py-2">
                     {registration.name}
                   </td>
                   <td className="border border-gray-300 px-4 py-2">
-                    {registration.date}
+                    {registration.email}
                   </td>
                   <td className="border border-gray-300 px-4 py-2">
-                    {registration.course}
+                    {registration.registrationDate}
+                  </td>
+                  <td className="border border-gray-300 px-4 py-2">
+                    ₹{" "}
+                    <strong className="text-green-500">
+                      {registration.amountPaid}
+                    </strong>
                   </td>
                 </tr>
               ))

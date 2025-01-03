@@ -136,6 +136,10 @@ export const router = createBrowserRouter([
             element: <AdminRegistrations />,
           },
           {
+            path: "/admin/registration/:id",
+            element: <AdminRegistrationDetail />,
+          },
+          {
             path: "/admin/manager/:id",
             element: <ManagerDetail />,
           },

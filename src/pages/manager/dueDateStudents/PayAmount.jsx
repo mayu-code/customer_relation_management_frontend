@@ -45,7 +45,8 @@ export const PayAmount = ({
       const jwt = localStorage.getItem("jwt");
 
       const res = await payAmount(jwt, payReq, "manager");
-      return alert(res?.data?.message);
+      alert(res?.data?.message);
+      refetch();
     } catch (error) {
       console.log(error);
       return alert(error?.message);
@@ -79,7 +80,7 @@ export const PayAmount = ({
       paymentType: "",
       email: "",
     });
-    refetch();
+
     // navigate(0);
   };
 
@@ -95,7 +96,7 @@ export const PayAmount = ({
               name="name"
               value={paymentForm.name}
               onChange={handlePaymentFormChange}
-              disabled // Disable editing the name since it's prefilled
+              readOnly // Disable editing the name since it's prefilled
             />
             {paymentFormErrors.name && (
               <p className="text-sm text-red-500">{paymentFormErrors.name}</p>
@@ -108,7 +109,7 @@ export const PayAmount = ({
               name="email"
               value={paymentForm.email}
               onChange={handlePaymentFormChange}
-              disabled
+              readOnly
             />
             {paymentFormErrors.email && (
               <p className="text-sm text-red-500">{paymentFormErrors.email}</p>

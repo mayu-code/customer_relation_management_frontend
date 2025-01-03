@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { getRegistrationById, payAmount } from "../../../api/apiData";
+import {
+  getRegistrationById,
+  payAmount,
+  updateRegistrationForm,
+} from "../../../api/apiData";
 import { useQuery } from "@tanstack/react-query";
 import { Input, Button, Radio } from "@material-tailwind/react";
 import { MailSend } from "../dueDateStudents/MailSend";
@@ -182,18 +186,22 @@ export const RegistrationDetail = () => {
 
     console.log("Full Payload to send:", payload);
 
-    // try {
-    //   // Assuming updateEnquiry function sends the updated data to the backend
-    //   await updateEquiryForm(jwt, payload);
-    //   setEditFields({});
-    //   setShowUpdateButton(false);
-    //   alert("Enquiry updated successfully!");
-    //   navigate(0);
-    // } catch (error) {
-    //   console.error("Error updating enquiry", error);
-    //   setEditFields({});
-    //   setShowUpdateButton(false);
-    // }
+    try {
+      // Assuming updateEnquiry function sends the updated data to the backend
+      const res = await updateRegistrationForm(jwt, payload);
+      setEditFields({});
+      setShowUpdateButton(false);
+      setShowDeleteButton(false);
+      alert(res?.data?.message);
+      refetch();
+    } catch (error) {
+      console.error("Error updating enquiry", error);
+      alert(error?.message);
+      setEditFields({});
+      setShowUpdateButton(false);
+      setShowDeleteButton(false);
+      refetch();
+    }
   };
 
   const handleCancelClick = () => {
@@ -240,6 +248,9 @@ export const RegistrationDetail = () => {
   const handleDownloadReceipt = (receipt) => {
     const doc = new jsPDF();
 
+    // Generate a random transaction ID
+    const transactionId = `TXN${Math.floor(Math.random() * 1000000)}`;
+
     // Set up a nice header with company name
     doc.setFont("helvetica", "bold");
     doc.setFontSize(24);
@@ -253,27 +264,29 @@ export const RegistrationDetail = () => {
 
     // Receipt labels
     doc.text("Receipt ID:", 20, 50);
-    doc.text("Date:", 20, 60);
-    doc.text("Payment Type:", 20, 70);
-    doc.text("Received Amount:", 20, 80);
-    doc.text("Sender:", 20, 90);
-    doc.text("Towards:", 20, 100);
+    doc.text("Transaction ID:", 20, 60); // Added label for transaction ID
+    doc.text("Date:", 20, 70);
+    doc.text("Payment Type:", 20, 80);
+    doc.text("Received Amount:", 20, 90);
+    doc.text("Sender:", 20, 100);
+    doc.text("Towards:", 20, 110);
 
     // Set font for receipt values (normal)
     doc.setFont("helvetica", "normal");
 
     // Receipt details
     doc.text(`${receipt.id}`, 80, 50);
-    doc.text(`${receipt.date}`, 80, 60);
-    doc.text(`${receipt.paymentType}`, 80, 70);
-    doc.text(`Rs. ${receipt.recievedAmount}`, 80, 80);
-    doc.text(`${receipt.sender}`, 80, 90);
-    doc.text(`${receipt.towards}`, 80, 100);
+    doc.text(transactionId, 80, 60); // Add the random transaction ID here
+    doc.text(`${receipt.date}`, 80, 70);
+    doc.text(`${receipt.paymentType}`, 80, 80);
+    doc.text(`Rs. ${receipt.recievedAmount}`, 80, 90);
+    doc.text(`${receipt.sender}`, 80, 100);
+    doc.text(`${receipt.towards}`, 80, 110);
 
     // Add a footer or additional info
     doc.setFontSize(10);
-    doc.text("Thank you for choosing Gradient Infotech!", 20, 120);
-    doc.text("For any queries, please contact us.", 20, 130);
+    doc.text("Thank you for choosing Gradient Infotech!", 20, 130);
+    doc.text("For any queries, please contact us.", 20, 140);
 
     // Save the PDF
     doc.save(`receipt_${receipt.id}.pdf`);
@@ -536,7 +549,7 @@ export const RegistrationDetail = () => {
           {/* Payment Form */}
           <div>
             {registration.installmentsMonths > 0 && (
-              <div className="flex flex-col border p-2 shadow-sm rounded-md text-xs">
+              <div className="flex flex-col border p-2 border-gray-300 shadow-sm rounded-md text-xs">
                 <div className="text-center mb-4">
                   <h2 className="text-xl font-bold">Pay Installment</h2>
                 </div>
@@ -548,7 +561,7 @@ export const RegistrationDetail = () => {
                       name="name"
                       value={paymentForm.name}
                       onChange={handlePaymentFormChange}
-                      disabled
+                      readOnly
                     />
                   </div>
                   <div className="mb-4">
@@ -558,7 +571,7 @@ export const RegistrationDetail = () => {
                       name="email"
                       value={paymentForm.email}
                       onChange={handlePaymentFormChange}
-                      disabled
+                      readOnly
                     />
                   </div>
                   <div className="mb-4">
@@ -616,7 +629,7 @@ export const RegistrationDetail = () => {
               </div>
             )}
           </div>
-          <div className="mt-5 text-xs shadow-sm rounded-md border p-3">
+          <div className="mt-5 text-xs shadow-sm rounded-md border-gray-300 border p-3">
             <h3 className="text-xl font-semibold mb-4">
               Existing Payment Details
             </h3>
@@ -628,7 +641,7 @@ export const RegistrationDetail = () => {
                 {registration.receipts.map((detail, index) => (
                   <div
                     key={detail.id}
-                    className="p-4 border rounded-lg shadow-md"
+                    className="p-4 border border-gray-300 rounded-lg shadow-md"
                   >
                     <div className="flex flex-col px-2 gap-2">
                       <div className="flex justify-between">

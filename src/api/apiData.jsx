@@ -279,6 +279,15 @@ export const updateEquiryForm = (jwt, enquiryFormReq) => {
   });
 };
 
+export const updateRegistrationForm = (jwt, registrationFormReq) => {
+  return api.post("/manager/updateRegistration", registrationFormReq, {
+    headers: {
+      // Corrected from 'Headers' to 'headers'
+      Authorization: `Bearer ${jwt}`,
+    },
+  });
+};
+
 export const payAmount = (jwt, payReq, entity) => {
   return api.post(`/${entity}/payAmount`, payReq, {
     headers: {
@@ -317,6 +326,33 @@ export const ApproveManager = (jwt, ApprovalReq) => {
 
 export const ActiveManager = (jwt, ApprovalReq) => {
   return api.post("/admin/activeManager", ApprovalReq, {
+    headers: {
+      // Corrected from 'Headers' to 'headers'
+      Authorization: `Bearer ${jwt}`,
+    },
+  });
+};
+
+export const getRecentRegistrations = (jwt, entity) => {
+  return api.get(`/${entity}/top5Registrations`, {
+    headers: {
+      // Corrected from 'Headers' to 'headers'
+      Authorization: `Bearer ${jwt}`,
+    },
+  });
+};
+
+export const getRecentEnquiries = (jwt, entity) => {
+  return api.get(`/${entity}/getTop5EnquiryForm`, {
+    headers: {
+      // Corrected from 'Headers' to 'headers'
+      Authorization: `Bearer ${jwt}`,
+    },
+  });
+};
+
+export const updateRegistration = (jwt, reqPayload) => {
+  return api.post("/admin/updateRegistration", reqPayload, {
     headers: {
       // Corrected from 'Headers' to 'headers'
       Authorization: `Bearer ${jwt}`,
